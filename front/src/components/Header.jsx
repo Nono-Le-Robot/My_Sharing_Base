@@ -8,13 +8,15 @@ export default function Header() {
     <Container>
       <div className="test">
         <div className="header">
-          <div className="logo-header">
-            <img src={Logo} alt="" srcset="" />
-            <h1>My Sharing Base</h1>
-          </div>
+          <Link className="logo-link" to="/">
+            <div className="logo-header">
+              <img src={Logo} alt="" srcset="" />
+              <h1>My Sharing Base</h1>
+            </div>
+          </Link>
           <nav>
-            <Link className="link" to="/">
-              Home
+            <Link className="link" to="/storage">
+              Storage
             </Link>
             <Link className="link" to="/register">
               Register
@@ -45,6 +47,10 @@ const Container = styled.div`
     align-items: center;
     gap: 2rem;
     margin: 0;
+  }
+  .logo-link {
+    text-decoration: none;
+    color: white;
   }
   nav {
     display: flex;

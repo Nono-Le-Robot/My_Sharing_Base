@@ -119,7 +119,7 @@ const Container = styled.div`
     input {
       border: 1px solid #ffffff;
       width: 90%;
-      height: 2.5rem;
+      height: 3rem;
       padding: 0.5rem 1rem;
       border-radius: 0.3rem;
 

@@ -4,6 +4,9 @@ import Header from "./components/Header";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
+import Storage from "./pages/Storage";
+import MyStorage from "./pages/MyStorage";
+import Upload from "./pages/Upload";
 
 export default function App() {
   return (
@@ -11,6 +14,9 @@ export default function App() {
     <BrowserRouter>
       <Header />
       <Routes>
+        <Route path="/storage" element={<Storage />} />
+        <Route path="/my-storage" element={<MyStorage />} />
+        <Route path="/upload" element={<Upload />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
