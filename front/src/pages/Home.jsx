@@ -66,7 +66,7 @@ const Container = styled.div`
   .infos {
     display: flex;
     flex-direction: column;
-    gap: 3rem;
+    gap: 5rem;
     justify-content: center;
   }
   .home {

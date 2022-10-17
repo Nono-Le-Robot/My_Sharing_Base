@@ -103,7 +103,7 @@ const Container = styled.div`
   background-color: #14143b;
 
   .register {
-    width: 20vw;
+    width: 30vw;
     background-color: #9290ff;
     padding: 5rem;
     border-radius: 0.3rem;
@@ -119,9 +119,8 @@ const Container = styled.div`
     input {
       border: 1px solid #ffffff;
       width: 90%;
-
-      height: 2rem;
-      padding: 0.5rem;
+      height: 2.5rem;
+      padding: 0.5rem 1rem;
       border-radius: 0.3rem;
 
       font-weight: bold;
@@ -137,9 +136,9 @@ const Container = styled.div`
       font-weight: bold;
       padding: 0.5rem;
       border-radius: 0.3rem;
-      width: 90%;
+      width: 30%;
 
-      height: 3.5rem;
+      height: 3rem;
       background-color: #121230;
       color: white;
       transition: 0.4s;
