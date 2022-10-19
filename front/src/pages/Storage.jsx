@@ -1,9 +1,21 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import MyStorage from "./MyStorage";
+import Upload from "./Upload";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Storage() {
   const navigate = useNavigate();
+
+  const toastOptions = {
+    position: "bottom-right",
+    autoClose: 3000,
+    pauseOnHover: false,
+    draggable: false,
+    theme: "dark",
+  };
 
   const goToMyStorage = () => {
     navigate("/my-storage");
@@ -16,27 +28,32 @@ export default function Storage() {
   return (
     <>
       <Container>
-        <div className="main">
-          <button onClick={goToMyStorage}>MY STORAGE</button>
-          <button onClick={goToNewUpload}>UPLOAD NEW FILE(S)</button>
+        <div className="main-storage">
+          <div className="my-files">
+            <MyStorage />
+          </div>
+          <div className="upload">
+            <Upload />
+          </div>
         </div>
       </Container>
+      <ToastContainer />
     </>
   );
 }
 
 const Container = styled.div`
-  height: 100vh;
-  width: 100vw;
+  /* overflow: hidden; */
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #14143b;
-  .main {
+  .main-storage {
     width: 100vw;
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: center;
   }
   button {
     margin-top: 10px;
@@ -55,5 +72,25 @@ const Container = styled.div`
       transition: 0.4s;
       background-color: #916aec;
     }
+  }
+  .my-files {
+    width: 50%;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .my-files {
+    width: 50vw;
+    height: 90vh;
+  }
+  .upload {
+    width: 50%;
+    height: 90vh;
+  }
+  .title {
+    margin-top: 3rem;
+    font-size: 2.4rem;
   }
 `;

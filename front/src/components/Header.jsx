@@ -10,7 +10,7 @@ export default function Header() {
         <div className="header">
           <Link className="logo-link" to="/">
             <div className="logo-header">
-              <img src={Logo} alt="" srcset="" />
+              <img src={Logo} alt="" />
               <h1>My Sharing Base</h1>
             </div>
           </Link>
@@ -32,9 +32,12 @@ export default function Header() {
 }
 
 const Container = styled.div`
-  position: absolute;
   width: 100vw;
+  height: 10vh;
+  background-color: #9290ff;
+
   .header {
+    height: 10vh;
     gap: 1.5rem;
     display: flex;
     justify-content: space-between;

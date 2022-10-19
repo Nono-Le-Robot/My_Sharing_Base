@@ -1,22 +1,64 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import EarthLowPoly from "../assets/test/terre-low-poly.png";
-import Earth from "../assets/test/terre.png";
-import Donut from "../assets/test/donut.png";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function MyStorage() {
   const navigate = useNavigate();
+
+  const toastOptions = {
+    position: "bottom-right",
+    autoClose: 3000,
+    pauseOnHover: false,
+    draggable: false,
+    theme: "dark",
+  };
 
   return (
     <>
       <Container>
         <div className="main">
-          <h2>My storage</h2>
-          <div className="storage-container">
-            <img src={Donut} alt="" />
-            <img src={EarthLowPoly} alt="" />
-            <img src={Earth} alt="" />
+          <h2 className="title">My Storage</h2>
+          <div className="flex-items">
+            <div className="items">
+              <div className="item">
+                <p className="file">test.png</p>
+              </div>
+              <div className="item">
+                <p className="file">test.png</p>
+              </div>
+              <div className="item">
+                <p className="file">test.png</p>
+              </div>
+              <div className="item">
+                <p className="file">test.png</p>
+              </div>
+              <div className="item">
+                <p className="file">test.png</p>
+              </div>{" "}
+              <div className="item">
+                <p className="file">test.png</p>
+              </div>{" "}
+              <div className="item">
+                <p className="file">test.png</p>
+              </div>{" "}
+              <div className="item">
+                <p className="file">test.png</p>
+              </div>{" "}
+              <div className="item">
+                <p className="file">test.png</p>
+              </div>{" "}
+              <div className="item">
+                <p className="file">test.png</p>
+              </div>{" "}
+              <div className="item">
+                <p className="file">test.png</p>
+              </div>{" "}
+              <div className="item">
+                <p className="file">test.png</p>
+              </div>
+            </div>
           </div>
         </div>
       </Container>
@@ -25,53 +67,44 @@ export default function MyStorage() {
 }
 
 const Container = styled.div`
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #14143b;
   .main {
-    width: 100vw;
-    height: 100vh;
+    overflow: hidden;
+    background-color: #15153f;
+    height: 90vh;
+    width: 50vw;
     display: flex;
+    align-items: center;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 6rem;
+    justify-content: start;
   }
-  img {
-    width: 20vw;
+  .flex-items {
+    height: 72vh;
   }
-
-  .storage-container {
-    width: 90vw;
+  .items {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
+    gap: 2rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
     flex-wrap: wrap;
-    gap: 5rem;
   }
-  h2 {
-    color: white;
-    font-size: 4rem;
-  }
-  button {
-    margin-top: 10px;
-    border: 1px solid #ffffff;
-    font-size: 20px;
-    font-weight: bold;
-    padding: 0.5rem;
-    border-radius: 0.3rem;
-    width: 20rem;
-    height: 7rem;
-    background-color: #263b75;
-    color: white;
-    transition: 0.4s;
+  .item {
+    padding: 1rem 2rem;
+    background-color: #4aa8ff;
+    box-shadow: 2px 2px 10px black;
+    color: black;
+    font-weight: 600;
+    font-size: 1.2rem;
+    border-radius: 0.6rem;
+    transition: 0.2s;
     &:hover {
       cursor: pointer;
-      transition: 0.4s;
-      background-color: #916aec;
+      transition: 0.2s;
+      transform: scale(1.05);
     }
+  }
+  .title {
+    margin-bottom: 3rem;
   }
 `;

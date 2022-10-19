@@ -1,26 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { toast, ToastContainer } from "react-toastify";
 export default function Login() {
   const navigate = useNavigate();
   const getStarted = () => {
     navigate("/register");
   };
-  const toastOptions = {
-    position: "bottom-right",
-    autoClose: 3000,
-    pauseOnHover: false,
-    draggable: false,
-    theme: "dark",
-  };
-
   return (
     <>
       <Container>
         <div className="home">
           <h2>
-            {" "}
             A simple place to share with anyone, for free and without limits.
           </h2>
           <div className="infos">
@@ -42,13 +31,12 @@ export default function Login() {
           </button>
         </div>
       </Container>
-      <ToastContainer />
     </>
   );
 }
 
 const Container = styled.div`
-  height: 100vh;
+  height: 90vh;
   width: 100vw;
   display: flex;
   align-items: center;

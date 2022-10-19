@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { loginRoute } from "../utils/APIRoutes";
 export default function Login() {
@@ -26,7 +27,7 @@ export default function Login() {
   const handleValidation = () => {
     const { username, password } = userData;
     if (password === "") {
-      toast.error("email is required.", toastOptions);
+      toast.error("password is required.", toastOptions);
       return false;
     } else if (username === "") {
       toast.error("username is required.", toastOptions);
@@ -47,10 +48,8 @@ export default function Login() {
       if (data.status === false) {
         toast.error(data.msg, toastOptions);
       } else {
-        toast.success("Sucess, redirect to the app...", toastOptions);
-        setTimeout(() => {
-          navigate("/app");
-        }, 4000);
+        toast.success(data.msg, toastOptions);
+        toast.success("welcome " + data.username, toastOptions);
       }
     }
   };
@@ -81,7 +80,7 @@ export default function Login() {
             />
             <button type="submit">LOGIN</button>
             <span>
-              Don't have an account ?{" "}
+              Don't have an account ?
               <Link className="link" to="/register">
                 Register
               </Link>
@@ -95,7 +94,7 @@ export default function Login() {
 }
 
 const Container = styled.div`
-  height: 100vh;
+  height: 90vh;
   width: 100vw;
   display: flex;
   align-items: center;
@@ -103,10 +102,10 @@ const Container = styled.div`
   background-color: #14143b;
 
   .register {
-    width: 30vw;
+    width: 600px;
     background-color: #9290ff;
     padding: 5rem;
-    border-radius: 0.3rem;
+    border-radius: 1rem;
 
     box-shadow: 2px 2px 10px #0000005a;
   }

@@ -27,3 +27,21 @@ module.exports.register = async (req, res) => {
     })
     .catch((err) => res.status(400).json({ error: err.message }));
 };
+
+module.exports.login = async (req, res) => {
+  const { username, password } = req.body;
+  const checkUser = await userModel.findOne({ username });
+  if (!checkUser) {
+    return res.json({ msg: "Wrong username or password", status: false });
+  }
+  const checkPassword = await bcrypt.compare(password, checkUser.password);
+  if (!checkPassword) {
+    return res.json({ msg: "Wrong username or password", status: false });
+  }
+  res.json({
+    status: true,
+    msg: `Login success !`,
+    userId: checkUser._id,
+    username: checkUser.username,
+  });
+};

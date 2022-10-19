@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { registerRoute } from "../utils/APIRoutes";
 export default function Register() {
@@ -125,7 +126,7 @@ export default function Register() {
 }
 
 const Container = styled.div`
-  height: 100vh;
+  height: 90vh;
   width: 100vw;
   display: flex;
   align-items: center;
@@ -133,10 +134,10 @@ const Container = styled.div`
   background-color: #14143b;
 
   .register {
-    width: 30vw;
+    width: 600px;
     background-color: #9290ff;
-    padding: 5rem;
-    border-radius: 0.3rem;
+    padding: 4rem;
+    border-radius: 1rem;
 
     box-shadow: 2px 2px 10px #0000005a;
   }

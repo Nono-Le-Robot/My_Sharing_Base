@@ -10,7 +10,6 @@ import Upload from "./pages/Upload";
 
 export default function App() {
   return (
-    /* <BrowserRouter basename="my-sharing-base/"> FOR EXPORT */
     <BrowserRouter>
       <Header />
       <Routes>
@@ -24,3 +23,4 @@ export default function App() {
     </BrowserRouter>
   );
 }
+// basename="my-sharing-base/"
