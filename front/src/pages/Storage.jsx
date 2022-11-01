@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import MyStorage from "./MyStorage";
@@ -8,7 +8,8 @@ import "react-toastify/dist/ReactToastify.css";
 
 export default function Storage() {
   const navigate = useNavigate();
-
+  const [newFile, setNewFile] = useState("");
+  const [updateListOfFile, setUpdateListOfFile] = useState("");
   const toastOptions = {
     position: "bottom-right",
     autoClose: 3000,
@@ -17,23 +18,19 @@ export default function Storage() {
     theme: "dark",
   };
 
-  const goToMyStorage = () => {
-    navigate("/my-storage");
-  };
-
-  const goToNewUpload = () => {
-    navigate("/upload");
-  };
+  function stateOfDetection(state) {
+    setUpdateListOfFile(state);
+  }
 
   return (
     <>
       <Container>
         <div className="main-storage">
-          <div className="my-files">
-            <MyStorage />
-          </div>
           <div className="upload">
-            <Upload />
+            <Upload newFileDetected={stateOfDetection} />
+          </div>
+          <div className="my-files">
+            <MyStorage isNewFile={updateListOfFile} />
           </div>
         </div>
       </Container>
@@ -48,12 +45,12 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #14143b;
+  background-color: #151544;
   .main-storage {
     width: 100vw;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
   }
   button {
     margin-top: 10px;
@@ -74,20 +71,42 @@ const Container = styled.div`
     }
   }
   .my-files {
+    overflow-y: scroll;
+    border-left: 1px #1c3157 solid;
     width: 50%;
     color: white;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-  }
-  .my-files {
+    justify-content: start;
     width: 50vw;
     height: 90vh;
+    ::-webkit-scrollbar {
+      height: 0;
+      width: 0.6rem;
+      border-radius: 1rem;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-image: linear-gradient(45deg, #a086ff, #00aeff);
+      border-radius: 1rem;
+      transition: 1s;
+    }
   }
   .upload {
+    ::-webkit-scrollbar {
+      width: 0.6rem;
+      border-radius: 1rem;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-image: linear-gradient(45deg, #a086ff, #00aeff);
+      border-radius: 1rem;
+      transition: 1s;
+    }
+    border-right: 1px #1c3157 solid;
+    overflow-y: scroll;
     width: 50%;
     height: 90vh;
+    padding-bottom: 2rem;
   }
   .title {
     margin-top: 3rem;

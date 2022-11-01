@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Logo from "../assets/logo.png";
 import { Link } from "react-router-dom";
 
-export default function Header() {
+export default function HeaderLogged() {
   const [isLogged, setIsLogged] = useState(false);
   const token = localStorage.getItem("iat");
   return (
@@ -17,12 +17,18 @@ export default function Header() {
             </div>
           </Link>
           <nav>
-            <div></div>
-            <Link className="link" to="/register">
-              Register
+            <Link className="link" to="/storage">
+              Storage
             </Link>
-            <Link className="link" to="/login">
-              Login
+            <Link
+              onClick={() => {
+                localStorage.removeItem("iat");
+                window.location.href = "login";
+              }}
+              className="link"
+              to="/login"
+            >
+              Logout
             </Link>
           </nav>
         </div>
@@ -76,10 +82,5 @@ const Container = styled.div`
     color: white;
     margin: 0;
     text-align: center;
-  }
-  @media screen and (max-width: 768px) {
-    h1 {
-      display: none;
-    }
   }
 `;

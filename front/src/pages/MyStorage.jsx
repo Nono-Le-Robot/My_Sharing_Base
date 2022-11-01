@@ -1,11 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, Component } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import styled from "styled-components";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
+import { myFilesRoute } from "../utils/APIRoutes";
+import RemoveIcon from "../assets/remove.png";
 
-export default function MyStorage() {
+export default function MyStorage(props) {
   const navigate = useNavigate();
+  const removeItem = () => {
+    alert("contacter le back pour supprimer le fichier");
+  };
 
   const toastOptions = {
     position: "bottom-right",
@@ -14,6 +20,32 @@ export default function MyStorage() {
     draggable: false,
     theme: "dark",
   };
+  const [userFiles, setUserFiles] = useState([]);
+
+  let test = [];
+  useEffect(() => {
+    axios
+      .post(myFilesRoute, {
+        token: localStorage.getItem("iat"),
+      })
+      .then((result) => {
+        setUserFiles(result.data.files);
+      })
+      .catch(() => alert("err"));
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      axios
+        .post(myFilesRoute, {
+          token: localStorage.getItem("iat"),
+        })
+        .then((result) => {
+          setUserFiles(result.data.files);
+        })
+        .catch(() => alert("err"));
+    }, 100);
+  }, [props.isNewFile]);
 
   return (
     <>
@@ -22,42 +54,19 @@ export default function MyStorage() {
           <h2 className="title">My Storage</h2>
           <div className="flex-items">
             <div className="items">
-              <div className="item">
-                <p className="file">test.png</p>
-              </div>
-              <div className="item">
-                <p className="file">test.png</p>
-              </div>
-              <div className="item">
-                <p className="file">test.png</p>
-              </div>
-              <div className="item">
-                <p className="file">test.png</p>
-              </div>
-              <div className="item">
-                <p className="file">test.png</p>
-              </div>{" "}
-              <div className="item">
-                <p className="file">test.png</p>
-              </div>{" "}
-              <div className="item">
-                <p className="file">test.png</p>
-              </div>{" "}
-              <div className="item">
-                <p className="file">test.png</p>
-              </div>{" "}
-              <div className="item">
-                <p className="file">test.png</p>
-              </div>{" "}
-              <div className="item">
-                <p className="file">test.png</p>
-              </div>{" "}
-              <div className="item">
-                <p className="file">test.png</p>
-              </div>{" "}
-              <div className="item">
-                <p className="file">test.png</p>
-              </div>
+              {userFiles.map((file, fileIndex) => (
+                <div key={fileIndex} className="item">
+                  <img
+                    onClick={removeItem}
+                    className="remove-icon"
+                    src={RemoveIcon}
+                    alt="icon de suppression en forme de croix. permet de supprimer le fichier"
+                  />
+                  <a download href={file.link} className="texte-download">
+                    {file.name.substring(16)}
+                  </a>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -68,9 +77,9 @@ export default function MyStorage() {
 
 const Container = styled.div`
   .main {
-    overflow: hidden;
-    background-color: #15153f;
-    height: 90vh;
+    padding-bottom: 3rem;
+
+    height: auto;
     width: 50vw;
     display: flex;
     align-items: center;
@@ -78,7 +87,7 @@ const Container = styled.div`
     justify-content: start;
   }
   .flex-items {
-    height: 72vh;
+    height: auto;
   }
   .items {
     display: flex;
@@ -89,13 +98,26 @@ const Container = styled.div`
     padding-right: 2rem;
     flex-wrap: wrap;
   }
+
+  @keyframes pop-item {
+    0% {
+      opacity: 0;
+      transform: scale(0.4);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
   .item {
-    padding: 1rem 2rem;
-    background-color: #4aa8ff;
+    animation: 0.5s pop-item ease-in-out forwards;
+    opacity: 0;
+
+    background-image: linear-gradient(45deg, #a086ff, #00aeff);
     box-shadow: 2px 2px 10px black;
     color: black;
     font-weight: 600;
-    font-size: 1.2rem;
+    font-size: 0.8rem;
     border-radius: 0.6rem;
     transition: 0.2s;
     &:hover {
@@ -105,6 +127,27 @@ const Container = styled.div`
     }
   }
   .title {
+    margin-top: 3rem;
     margin-bottom: 3rem;
+  }
+  .remove-icon {
+    width: 1.3rem;
+    position: absolute;
+    left: 100%;
+    top: -20%;
+    transform: translateX(-12px);
+    display: flex;
+    justify-content: flex-end;
+  }
+  .texte-download {
+    text-decoration: underline;
+    display: block;
+    padding: 0.9rem 2rem 0.9rem 2.2rem;
+    border-radius: 0.4rem;
+    color: black;
+    margin: 0;
+    &:visited {
+      color: black;
+    }
   }
 `;

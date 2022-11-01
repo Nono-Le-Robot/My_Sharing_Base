@@ -1,5 +1,6 @@
 const userModel = require("../models/auth.model");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 module.exports.register = async (req, res) => {
   const { username, email, password } = req.body;
@@ -29,19 +30,38 @@ module.exports.register = async (req, res) => {
 };
 
 module.exports.login = async (req, res) => {
-  const { username, password } = req.body;
-  const checkUser = await userModel.findOne({ username });
-  if (!checkUser) {
-    return res.json({ msg: "Wrong username or password", status: false });
-  }
-  const checkPassword = await bcrypt.compare(password, checkUser.password);
-  if (!checkPassword) {
-    return res.json({ msg: "Wrong username or password", status: false });
-  }
-  res.json({
-    status: true,
-    msg: `Login success !`,
-    userId: checkUser._id,
-    username: checkUser.username,
-  });
+  userModel
+    .findOne({ username: req.body.username })
+    .then((user) => {
+      if (!user) {
+        return res.json({ msg: "User not found", status: false });
+      }
+      bcrypt
+        .compare(req.body.password, user.password)
+        .then((valid) => {
+          if (!valid) {
+            return res.json({
+              msg: "Username or password invalid",
+              status: false,
+            });
+          }
+
+          function generateAcessToken(data) {
+            return jwt.sign(
+              { data },
+              "kyQ4fG1W9DgXXjhJb8nA5pFt8FEY6VD0rBF40JlgAKoL2eYkiLTxps2SMXOJ4NTAJ5C0nM",
+              { expiresIn: "30d" }
+            );
+            // res.cookie("jwt",token,{httpOnly : true,  maxAge: durationTokenLogin})
+          }
+          const acessToken = generateAcessToken(user);
+          res.status(200).json({
+            userId: user._id,
+            username: req.body.username,
+            iat: acessToken,
+          });
+        })
+        .catch((error) => res.status(401).send(error.message));
+    })
+    .catch((error) => res.status(401).send(error.message));
 };

@@ -5,6 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { loginRoute } from "../utils/APIRoutes";
+import LoginLogo from "../assets/login.png";
 export default function Login() {
   const navigate = useNavigate();
   const [userData, setUserData] = useState({
@@ -49,7 +50,9 @@ export default function Login() {
         toast.error(data.msg, toastOptions);
       } else {
         toast.success(data.msg, toastOptions);
-        toast.success("welcome " + data.username, toastOptions);
+        localStorage.setItem("iat", data.iat);
+        localStorage.setItem("username", data.username);
+        window.location.href = "storage";
       }
     }
   };
@@ -58,6 +61,13 @@ export default function Login() {
     <>
       <Container>
         <div className="register">
+          <div className="register-logo-div">
+            <img
+              className="register-logo"
+              src={LoginLogo}
+              alt="icon d'enregistrement representant une personne avec un logo + a coté"
+            />
+          </div>
           <form
             onSubmit={(event) => handleSubmit(event)}
             className="register-form"
@@ -101,10 +111,24 @@ const Container = styled.div`
   justify-content: center;
   background-color: #14143b;
 
+  .register-logo-div {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+  .register-logo {
+    background-color: #121230;
+    border-radius: 2rem;
+    width: 4rem;
+    padding: 0.7rem;
+  }
+
   .register {
     width: 600px;
-    background-color: #9290ff;
-    padding: 5rem;
+    background-image: linear-gradient(45deg, #a086ff, #00aeff);
+    padding: 2rem;
     border-radius: 1rem;
 
     box-shadow: 2px 2px 10px #0000005a;
@@ -148,6 +172,7 @@ const Container = styled.div`
       }
     }
     .link {
+      margin-left: 5px;
       text-decoration: none;
       color: #0400ff;
       font-weight: bold;

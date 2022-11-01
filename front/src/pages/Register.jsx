@@ -5,6 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { registerRoute } from "../utils/APIRoutes";
+import RegisterLogo from "../assets/register.png";
 export default function Register() {
   const navigate = useNavigate();
   const [userData, setUserData] = useState({
@@ -74,6 +75,13 @@ export default function Register() {
     <>
       <Container>
         <div className="register">
+          <div className="register-logo-div">
+            <img
+              className="register-logo "
+              src={RegisterLogo}
+              alt="logo de connexion representant une clé "
+            />
+          </div>
           <form
             onSubmit={(event) => handleSubmit(event)}
             className="register-form"
@@ -112,7 +120,7 @@ export default function Register() {
             />
             <button type="submit">CREATE USER</button>
             <span>
-              Already have an account ?{" "}
+              Already have an account ?
               <Link className="link" to="/login">
                 Login
               </Link>
@@ -132,11 +140,23 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   background-color: #14143b;
-
+  .register-logo-div {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+  .register-logo {
+    background-color: #0f0f2e;
+    width: 4rem;
+    padding: 0.8rem;
+    border-radius: 2rem;
+  }
   .register {
     width: 600px;
-    background-color: #9290ff;
-    padding: 4rem;
+    background-image: linear-gradient(45deg, #00aeff, #a086ff);
+    padding: 2rem;
     border-radius: 1rem;
 
     box-shadow: 2px 2px 10px #0000005a;
@@ -181,6 +201,7 @@ const Container = styled.div`
       }
     }
     .link {
+      margin-left: 5px;
       text-decoration: none;
       color: #0400ff;
       font-weight: bold;
