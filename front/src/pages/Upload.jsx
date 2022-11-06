@@ -51,6 +51,7 @@ export default function Upload(props) {
     const file = files[currentFileIndex];
     const data = readerEvent.target.result;
     const params = new URLSearchParams();
+    params.set("uploadBy", localStorage.getItem("iat"));
     params.set("name", file.name);
     params.set("size", file.size);
     params.set("currentChunkIndex", currentChunkIndex);
@@ -94,12 +95,13 @@ export default function Upload(props) {
           }, 200);
 
           file.finalFilename = response.data.finalFilename;
+          const userId = localStorage.getItem("userId");
           setLastUploadedFileIndex(currentFileIndex);
           setCurrentChunkIndex(null);
           axios.post(addFiles, {
             token: localStorage.getItem("iat"),
             username: localStorage.getItem("username"),
-            link: `${host}/files/${file.finalFilename}`,
+            link: `${host}/files/${userId}/${file.finalFilename}`,
             filename: file.finalFilename,
             size: file.size,
             format: file.type,
@@ -189,8 +191,8 @@ export default function Upload(props) {
               alt="Logo de fichier montrant qu'il faut deposer des fichier dans la zone."
             />
             <div className="inside-dragzone-h">
-              <h4> Drop your files here</h4>
-              <h6>(folder not supported)</h6>
+              <h4> Drop your files here.</h4>
+              <h6>(For folders : compress before upload)</h6>
             </div>
           </div>
 
@@ -206,7 +208,7 @@ export default function Upload(props) {
             onClick={() => alert('Paused, click "ok" to resume.')}
             src={PauseIcon}
             alt="pause icon"
-            srcset=""
+            srcSet=""
             className={fixedNumOfDroppedFiles === 0 ? "done" : "pause-icon"}
           />
           <div className="files">
@@ -217,7 +219,7 @@ export default function Upload(props) {
                 const deleteDiv = document.querySelectorAll(".animation");
                 setTimeout(() => {
                   deleteDiv[fileIndex].remove();
-                }, 1500);
+                }, 600);
               } else {
                 const uploading = fileIndex === currentFileIndex;
                 const chunks = Math.ceil(file.size / chunkSize);
@@ -280,7 +282,7 @@ const Container = styled.div`
     width: 80%;
     margin-left: auto;
     margin-right: auto;
-    height: 20vh;
+    height: 25vh;
     color: white;
     border: 2px dashed #acacac;
     border-radius: 1rem;
@@ -381,5 +383,10 @@ const Container = styled.div`
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    font-size: 20px;
+    h6 {
+      font-size: 17px;
+      text-transform: none;
+    }
   }
 `;

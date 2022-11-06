@@ -127,6 +127,9 @@ export default function Register() {
             </span>
           </form>
         </div>
+        <div className="mobile">
+          <h2>Only available on desktop for the moment...</h2>
+        </div>
       </Container>
       <ToastContainer />
     </>
@@ -160,6 +163,9 @@ const Container = styled.div`
     border-radius: 1rem;
 
     box-shadow: 2px 2px 10px #0000005a;
+  }
+  .mobile {
+    display: none;
   }
   .register-form {
     display: flex;
@@ -205,6 +211,20 @@ const Container = styled.div`
       text-decoration: none;
       color: #0400ff;
       font-weight: bold;
+    }
+  }
+  @media screen and (max-width: 1280px) {
+    .mobile {
+      display: block;
+      h2 {
+        margin: 0 1rem;
+        color: white;
+        font-size: 2rem;
+        text-align: center;
+      }
+    }
+    .register {
+      display: none;
     }
   }
 `;

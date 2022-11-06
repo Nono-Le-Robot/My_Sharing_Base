@@ -33,6 +33,11 @@ export default function Storage() {
             <MyStorage isNewFile={updateListOfFile} />
           </div>
         </div>
+        <div className="mobile">
+          <h2>
+            Only available on desktop for the moment... (work on mobile app)
+          </h2>
+        </div>
       </Container>
       <ToastContainer />
     </>
@@ -51,6 +56,9 @@ const Container = styled.div`
     display: flex;
     align-items: center;
     justify-content: flex-start;
+  }
+  .mobile {
+    display: none;
   }
   button {
     margin-top: 10px;
@@ -111,5 +119,23 @@ const Container = styled.div`
   .title {
     margin-top: 3rem;
     font-size: 2.4rem;
+  }
+  @media screen and (max-width: 1280px) {
+    .mobile {
+      height: 90vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      h2 {
+        margin: 0 1rem;
+        color: white;
+        font-size: 2rem;
+        text-align: center;
+      }
+    }
+    .main-storage {
+      display: none;
+    }
   }
 `;

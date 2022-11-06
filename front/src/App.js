@@ -41,4 +41,3 @@ export default function App() {
     );
   }
 }
-// basename="my-sharing-base/"

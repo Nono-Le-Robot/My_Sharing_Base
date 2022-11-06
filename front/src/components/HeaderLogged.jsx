@@ -40,7 +40,7 @@ export default function HeaderLogged() {
 const Container = styled.div`
   width: 100vw;
   height: 10vh;
-  background-color: #9290ff;
+  background-color: #14143b;
 
   .header {
     height: 10vh;
@@ -82,5 +82,10 @@ const Container = styled.div`
     color: white;
     margin: 0;
     text-align: center;
+  }
+  @media screen and (max-width: 1280px) {
+    .test {
+      display: none;
+    }
   }
 `;

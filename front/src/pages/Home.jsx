@@ -11,21 +11,14 @@ export default function Login() {
     <>
       <Container>
         <div className="home">
-          <h2>Share with anyone, for free and without limits.</h2>
-          <div className="infos">
-            <h3>
-              <span className="number">1</span>Share your files with others
-              people, without pay anything.
-            </h3>
-            <h3>
-              <span className="number">2</span>Enjoy vidéos and share your
-              screens in real time with your friends.
-            </h3>
-            <h3>
-              <span className="number">3</span>Chat, call and share anything in
-              the Social Hub.
-            </h3>
-          </div>
+          <h2>Share your files with anyone, for free and without limits.</h2>
+          <h3>Unlimited disk storage</h3>
+          <h3>Upload large files without any size limit per file</h3>
+        </div>
+        <div className="mobile">
+          <h2>
+            Only available on desktop for the moment... (work on mobile app)
+          </h2>
         </div>
       </Container>
     </>
@@ -40,6 +33,9 @@ const Container = styled.div`
   justify-content: center;
   background-color: #14143b;
 
+  .mobile {
+    display: none;
+  }
   .number {
     background-image: linear-gradient(45deg, #7e6ac5, #009ce4);
     padding: 1rem 1.5rem;
@@ -65,6 +61,7 @@ const Container = styled.div`
     color: #ffffff;
   }
   h2 {
+    margin: 0 1rem;
     color: white;
     font-size: 2rem;
     text-align: center;
@@ -94,40 +91,13 @@ const Container = styled.div`
       filter: contrast(150%);
     }
   }
-  @media screen and (max-width: 1080px) {
-    h2 {
-      word-wrap: break-word;
-      margin-left: 2rem;
-      margin-right: 2rem;
+  @media screen and (max-width: 1280px) {
+    .mobile {
+      display: block;
+      margin: 0 1rem;
     }
-    h3 {
-      margin-left: 2rem;
-      margin-right: 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-  }
-  @media screen and (max-width: 768px) {
-    .number {
-      transform: scale(0.7);
-      margin: 0.5rem;
-    }
-    .infos {
-      gap: 2rem;
-    }
-    h2 {
-      font-size: 2rem;
-      position: relative;
-      top: -2rem;
-    }
-
     .home {
-      justify-content: space-between;
-
-      gap: 4rem;
+      display: none;
     }
   }
 `;

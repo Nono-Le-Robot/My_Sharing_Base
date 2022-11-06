@@ -1,25 +1,28 @@
 import React, { useState, useEffect, Component } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styled from "styled-components";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import { myFilesRoute } from "../utils/APIRoutes";
+import { myFilesRoute, removeFiles } from "../utils/APIRoutes";
 import RemoveIcon from "../assets/remove.png";
 
 export default function MyStorage(props) {
   const navigate = useNavigate();
-  const removeItem = () => {
-    alert("contacter le back pour supprimer le fichier");
+
+  const removeItem = async (file) => {
+    await axios.post(removeFiles, {
+      iat: localStorage.getItem("iat"),
+      fileName: file.name,
+    });
+    await axios
+      .post(myFilesRoute, {
+        token: localStorage.getItem("iat"),
+      })
+      .then((result) => {
+        setUserFiles(result.data.files);
+      })
+      .catch(() => alert("err"));
   };
 
-  const toastOptions = {
-    position: "bottom-right",
-    autoClose: 3000,
-    pauseOnHover: false,
-    draggable: false,
-    theme: "dark",
-  };
   const [userFiles, setUserFiles] = useState([]);
 
   let test = [];
@@ -57,7 +60,7 @@ export default function MyStorage(props) {
               {userFiles.map((file, fileIndex) => (
                 <div key={fileIndex} className="item">
                   <img
-                    onClick={removeItem}
+                    onClick={() => removeItem(file)}
                     className="remove-icon"
                     src={RemoveIcon}
                     alt="icon de suppression en forme de croix. permet de supprimer le fichier"
