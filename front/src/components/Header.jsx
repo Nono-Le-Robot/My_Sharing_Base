@@ -4,31 +4,36 @@ import Logo from "../assets/logo.png";
 import { Link } from "react-router-dom";
 
 export default function Header() {
-  const [isLogged, setIsLogged] = useState(false);
-  const token = localStorage.getItem("iat");
-  return (
-    <Container>
-      <div className="test">
-        <div className="header">
-          <Link className="logo-link" to="/">
-            <div className="logo-header">
-              <img src={Logo} alt="" />
-              <h1>My Sharing Base</h1>
-            </div>
-          </Link>
-          <nav>
-            <div></div>
-            <Link className="link" to="/register">
-              Register
+  var userAgent;
+  userAgent = navigator.userAgent.toLowerCase();
+
+  if (typeof orientation !== "undefined" || userAgent.indexOf("mobile") >= 0) {
+    alert("open in desktop");
+  } else {
+    return (
+      <Container>
+        <div className="test">
+          <div className="header">
+            <Link className="logo-link" to="/">
+              <div className="logo-header">
+                <img src={Logo} alt="" />
+                <h1>My Sharing Base</h1>
+              </div>
             </Link>
-            <Link className="link" to="/login">
-              Login
-            </Link>
-          </nav>
+            <nav>
+              <div></div>
+              <Link className="link" to="/register">
+                Register
+              </Link>
+              <Link className="link" to="/login">
+                Login
+              </Link>
+            </nav>
+          </div>
         </div>
-      </div>
-    </Container>
-  );
+      </Container>
+    );
+  }
 }
 
 const Container = styled.div`
@@ -76,10 +81,5 @@ const Container = styled.div`
     color: white;
     margin: 0;
     text-align: center;
-  }
-  @media screen and (max-width: 1280px) {
-    .test {
-      display: none;
-    }
   }
 `;

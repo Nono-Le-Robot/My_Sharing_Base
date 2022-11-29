@@ -57,56 +57,62 @@ export default function Login() {
       }
     }
   };
+  var userAgent;
+  userAgent = navigator.userAgent.toLowerCase();
 
-  return (
-    <>
-      <Container>
-        <div className="register">
-          <div className="register-logo-div">
-            <img
-              className="register-logo"
-              src={LoginLogo}
-              alt="icon d'enregistrement representant une personne avec un logo + a coté"
-            />
+  if (typeof orientation !== "undefined" || userAgent.indexOf("mobile") >= 0) {
+    alert("open in desktop");
+  } else {
+    return (
+      <>
+        <Container>
+          <div className="register">
+            <div className="register-logo-div">
+              <img
+                className="register-logo"
+                src={LoginLogo}
+                alt="icon d'enregistrement representant une personne avec un logo + a coté"
+              />
+            </div>
+            <form
+              onSubmit={(event) => handleSubmit(event)}
+              className="register-form"
+            >
+              <input
+                autoComplete="nope"
+                type="text"
+                name="username"
+                className="username"
+                placeholder="Username"
+                onChange={(e) => handleChange(e)}
+              />
+              <input
+                autoComplete="nope"
+                type="password"
+                name="password"
+                className="password"
+                placeholder="Password"
+                onChange={(e) => handleChange(e)}
+              />
+              <button type="submit">LOGIN</button>
+              <span>
+                Don't have an account ?
+                <Link className="link" to="/register">
+                  Register
+                </Link>
+              </span>
+            </form>
           </div>
-          <form
-            onSubmit={(event) => handleSubmit(event)}
-            className="register-form"
-          >
-            <input
-              autoComplete="nope"
-              type="text"
-              name="username"
-              className="username"
-              placeholder="Username"
-              onChange={(e) => handleChange(e)}
-            />
-            <input
-              autoComplete="nope"
-              type="password"
-              name="password"
-              className="password"
-              placeholder="Password"
-              onChange={(e) => handleChange(e)}
-            />
-            <button type="submit">LOGIN</button>
-            <span>
-              Don't have an account ?
-              <Link className="link" to="/register">
-                Register
-              </Link>
-            </span>
-          </form>
-        </div>
-        <div className="mobile">
-          <h2>
-            Only available on desktop for the moment... (work on mobile app)
-          </h2>
-        </div>
-      </Container>
-      <ToastContainer />
-    </>
-  );
+          <div className="mobile">
+            <h2>
+              Only available on desktop for the moment... (work on mobile app)
+            </h2>
+          </div>
+        </Container>
+        <ToastContainer />
+      </>
+    );
+  }
 }
 
 const Container = styled.div`
@@ -185,21 +191,6 @@ const Container = styled.div`
       text-decoration: none;
       color: #0400ff;
       font-weight: bold;
-    }
-  }
-
-  @media screen and (max-width: 1280px) {
-    .mobile {
-      display: block;
-      h2 {
-        margin: 0 1rem;
-        color: white;
-        font-size: 2rem;
-        text-align: center;
-      }
-    }
-    .register {
-      display: none;
     }
   }
 `;

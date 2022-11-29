@@ -31,6 +31,7 @@ export default function Upload(props) {
     e.preventDefault();
     props.newFileDetected("");
     setFiles([...files, ...e.dataTransfer.files]);
+    console.log(files);
     setFixedNumOfDroppedFiles(e.dataTransfer.files.length);
   }
 
@@ -153,50 +154,61 @@ export default function Upload(props) {
       readAndUploadCurrentChunk();
     }
   }, [currentChunkIndex]);
+  var userAgent;
+  userAgent = navigator.userAgent.toLowerCase();
 
-  return (
-    <>
-      <Container>
-        <div
-          className="drop-page"
-          onDragOver={(e) => {
-            e.preventDefault();
-          }}
-          onDragLeave={(e) => {
-            e.preventDefault();
-          }}
-          onDrop={(e) => {
-            handleDrop(e);
-          }}
-        >
-          <h2 className="title">Upload New Files</h2>
+  if (typeof orientation !== "undefined" || userAgent.indexOf("mobile") >= 0) {
+    alert("open in desktop");
+  } else {
+    return (
+      <>
+        <Container>
           <div
+            multiple
+            webkitdirectory
+            mozdirectory
+            directory
+            type="file"
+            className="drop-page"
             onDragOver={(e) => {
-              setDropzoneActive(true);
               e.preventDefault();
             }}
             onDragLeave={(e) => {
-              setDropzoneActive(false);
               e.preventDefault();
             }}
             onDrop={(e) => {
-              setDropzoneActive(false);
               handleDrop(e);
             }}
-            className={"dropzone" + (dropzoneActive ? " active" : "")}
           >
-            <img
-              className="drag-drop-icon"
-              src={DragDropIcon}
-              alt="Logo de fichier montrant qu'il faut deposer des fichier dans la zone."
-            />
-            <div className="inside-dragzone-h">
-              <h4> Drop your files here.</h4>
-              <h6>(For folders : compress before upload)</h6>
-            </div>
-          </div>
+            <h2 className="title">Upload New Files</h2>
 
-          {/* <p
+            <div
+              onDragOver={(e) => {
+                setDropzoneActive(true);
+                e.preventDefault();
+              }}
+              onDragLeave={(e) => {
+                setDropzoneActive(false);
+                e.preventDefault();
+              }}
+              onDrop={(e) => {
+                setDropzoneActive(false);
+                handleDrop(e);
+              }}
+              className={"dropzone" + (dropzoneActive ? " active" : "")}
+            >
+              <img
+                className="drag-drop-icon"
+                src={DragDropIcon}
+                alt="Logo de fichier montrant qu'il faut deposer des fichier dans la zone."
+              />
+              <div className="inside-dragzone-h">
+                <h4> Drop your files here.</h4>
+                <h6>(For folders : compress before upload)</h6>
+              </div>
+            </div>
+
+            {/* <p
               className={
                 fixedNumOfDroppedFiles === 0 ? "done" : "file-in_queue"
               }
@@ -204,58 +216,61 @@ export default function Upload(props) {
               {indexOfUpload}/{fixedNumOfDroppedFiles}
             </p> */}
 
-          <img
-            onClick={() => alert('Paused, click "ok" to resume.')}
-            src={PauseIcon}
-            alt="pause icon"
-            srcSet=""
-            className={fixedNumOfDroppedFiles === 0 ? "done" : "pause-icon"}
-          />
-          <div className="files">
-            {files.map((file, fileIndex) => {
-              let progress = 0;
-              if (file.finalFilename) {
-                progress = 100;
-                const deleteDiv = document.querySelectorAll(".animation");
-                setTimeout(() => {
-                  deleteDiv[fileIndex].remove();
-                }, 600);
-              } else {
-                const uploading = fileIndex === currentFileIndex;
-                const chunks = Math.ceil(file.size / chunkSize);
-                if (uploading) {
-                  progress = Math.round((currentChunkIndex / chunks) * 100);
+            <img
+              onClick={() => alert('Paused, click "ok" to resume.')}
+              src={PauseIcon}
+              alt="pause icon"
+              srcSet=""
+              className={fixedNumOfDroppedFiles === 0 ? "done" : "pause-icon"}
+            />
+            <div className="files">
+              {files.map((file, fileIndex) => {
+                let progress = 0;
+                if (file.finalFilename) {
+                  progress = 100;
+                  const deleteDiv = document.querySelectorAll(".animation");
+                  setTimeout(() => {
+                    deleteDiv[fileIndex].remove();
+                  }, 600);
                 } else {
-                  progress = 0;
+                  const uploading = fileIndex === currentFileIndex;
+                  const chunks = Math.ceil(file.size / chunkSize);
+                  if (uploading) {
+                    progress = Math.round((currentChunkIndex / chunks) * 100);
+                  } else {
+                    progress = 0;
+                  }
                 }
-              }
-              return (
-                <div className={progress === 100 ? "animation" : ""}>
-                  <div className="progress-size"></div>
-                  <div className={"file " + (progress === 100 ? "test2" : "")}>
-                    <div className="name">{file.name}</div>
+                return (
+                  <div className={progress === 100 ? "animation" : ""}>
+                    <div className="progress-size"></div>
                     <div
-                      key={file.name}
-                      className={
-                        "progress " + (progress === 100 ? "test2" : "")
-                      }
-                      style={{ width: progress + "%" }}
+                      className={"file " + (progress === 100 ? "test2" : "")}
                     >
-                      {progress}%
+                      <div className="name">{file.name}</div>
+                      <div
+                        key={file.name}
+                        className={
+                          "progress " + (progress === 100 ? "test2" : "")
+                        }
+                        style={{ width: progress + "%" }}
+                      >
+                        {progress}%
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </Container>
-    </>
-  );
+        </Container>
+      </>
+    );
+  }
 }
 
 const Container = styled.div`
-  overflow: hidden;
+  overflow-y: scroll;
   .pause-icon {
     margin-top: 20px;
     width: 2rem;
@@ -268,9 +283,21 @@ const Container = styled.div`
     }
   }
   .drop-page {
+    padding-bottom: 12rem;
+    ::-webkit-scrollbar {
+      height: 0;
+      width: 0.6rem;
+      border-radius: 1rem;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-image: linear-gradient(45deg, #a086ff, #00aeff);
+      border-radius: 1rem;
+      transition: 1s;
+    }
     width: 50vw;
     position: absolute;
     overflow: hidden;
+    overflow-y: scroll;
     height: 90vh;
   }
   .dropzone {

@@ -7,22 +7,29 @@ export default function Login() {
   const getStarted = () => {
     navigate("/register");
   };
-  return (
-    <>
-      <Container>
-        <div className="home">
-          <h2>Share your files with anyone, for free and without limits.</h2>
-          <h3>Unlimited disk storage</h3>
-          <h3>Upload large files without any size limit per file</h3>
-        </div>
-        <div className="mobile">
-          <h2>
-            Only available on desktop for the moment... (work on mobile app)
-          </h2>
-        </div>
-      </Container>
-    </>
-  );
+  var userAgent;
+  userAgent = navigator.userAgent.toLowerCase();
+
+  if (typeof orientation !== "undefined" || userAgent.indexOf("mobile") >= 0) {
+    alert("open in desktop");
+  } else {
+    return (
+      <>
+        <Container>
+          <div className="home">
+            <h2>Share your files with anyone, for free and without limits.</h2>
+            <h3>Unlimited disk storage</h3>
+            <h3>Upload large files without any size limit per file</h3>
+          </div>
+          <div className="mobile">
+            <h2>
+              Only available on desktop for the moment... (work on mobile app)
+            </h2>
+          </div>
+        </Container>
+      </>
+    );
+  }
 }
 
 const Container = styled.div`
@@ -91,7 +98,7 @@ const Container = styled.div`
       filter: contrast(150%);
     }
   }
-  @media screen and (max-width: 1280px) {
+  /* @media screen and (max-width: 1280px) {
     .mobile {
       display: block;
       margin: 0 1rem;
@@ -99,5 +106,5 @@ const Container = styled.div`
     .home {
       display: none;
     }
-  }
+  } */
 `;

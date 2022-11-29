@@ -9,11 +9,15 @@ const cors = require("cors");
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.raw({ type: "application/octet-stream", limit: "500mb" }));
+app.use(bodyParser.raw({ type: "application/octet-stream", limit: "1000mb" }));
 
-app.use("/api/auth", authRoutes);
-app.use("/", filesRoutes);
-app.use("/files", express.static("files"));
+app.use("/portfolio/my-sharing-base/api/auth", authRoutes);
+app.use("/portfolio/my-sharing-base/", filesRoutes);
+app.use("/portfolio/my-sharing-base/files", express.static("files"));
+
+// app.use("/api/auth", authRoutes);
+// app.use("/", filesRoutes);
+// app.use("/files", express.static("files"));
 
 app.listen(process.env.PORT, () => {
   console.log(`listening on port ${process.env.PORT}`);

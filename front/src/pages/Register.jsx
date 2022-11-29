@@ -70,70 +70,76 @@ export default function Register() {
       }
     }
   };
+  var userAgent;
+  userAgent = navigator.userAgent.toLowerCase();
 
-  return (
-    <>
-      <Container>
-        <div className="register">
-          <div className="register-logo-div">
-            <img
-              className="register-logo "
-              src={RegisterLogo}
-              alt="logo de connexion representant une clé "
-            />
+  if (typeof orientation !== "undefined" || userAgent.indexOf("mobile") >= 0) {
+    alert("open in desktop");
+  } else {
+    return (
+      <>
+        <Container>
+          <div className="register">
+            <div className="register-logo-div">
+              <img
+                className="register-logo "
+                src={RegisterLogo}
+                alt="logo de connexion representant une clé "
+              />
+            </div>
+            <form
+              onSubmit={(event) => handleSubmit(event)}
+              className="register-form"
+            >
+              <input
+                autoComplete="nope"
+                type="text"
+                name="username"
+                className="username"
+                placeholder="Username"
+                onChange={(e) => handleChange(e)}
+              />
+              <input
+                autoComplete="nope"
+                type="text"
+                name="email"
+                className="email"
+                placeholder="Email"
+                onChange={(e) => handleChange(e)}
+              />
+              <input
+                autoComplete="nope"
+                type="password"
+                name="password"
+                className="password"
+                placeholder="Password"
+                onChange={(e) => handleChange(e)}
+              />
+              <input
+                autoComplete="nope"
+                type="password"
+                name="confirmPassword"
+                className="confirmPassword"
+                placeholder="Confirm Password"
+                onChange={(e) => handleChange(e)}
+              />
+              <button type="submit">CREATE USER</button>
+              <span>
+                Already have an account ?
+                <Link className="link" to="/login">
+                  Login
+                </Link>
+              </span>
+            </form>
           </div>
-          <form
-            onSubmit={(event) => handleSubmit(event)}
-            className="register-form"
-          >
-            <input
-              autoComplete="nope"
-              type="text"
-              name="username"
-              className="username"
-              placeholder="Username"
-              onChange={(e) => handleChange(e)}
-            />
-            <input
-              autoComplete="nope"
-              type="text"
-              name="email"
-              className="email"
-              placeholder="Email"
-              onChange={(e) => handleChange(e)}
-            />
-            <input
-              autoComplete="nope"
-              type="password"
-              name="password"
-              className="password"
-              placeholder="Password"
-              onChange={(e) => handleChange(e)}
-            />
-            <input
-              autoComplete="nope"
-              type="password"
-              name="confirmPassword"
-              className="confirmPassword"
-              placeholder="Confirm Password"
-              onChange={(e) => handleChange(e)}
-            />
-            <button type="submit">CREATE USER</button>
-            <span>
-              Already have an account ?
-              <Link className="link" to="/login">
-                Login
-              </Link>
-            </span>
-          </form>
-        </div>
-        <div className="mobile">
-          <h2>Only available on desktop for the moment...</h2>
-        </div>
-      </Container>
-      <ToastContainer />
-    </>
-  );
+          <div className="mobile">
+            <h2>Only available on desktop for the moment...</h2>
+          </div>
+        </Container>
+        <ToastContainer />
+      </>
+    );
+  }
 }
 
 const Container = styled.div`
@@ -211,20 +217,6 @@ const Container = styled.div`
       text-decoration: none;
       color: #0400ff;
       font-weight: bold;
-    }
-  }
-  @media screen and (max-width: 1280px) {
-    .mobile {
-      display: block;
-      h2 {
-        margin: 0 1rem;
-        color: white;
-        font-size: 2rem;
-        text-align: center;
-      }
-    }
-    .register {
-      display: none;
     }
   }
 `;

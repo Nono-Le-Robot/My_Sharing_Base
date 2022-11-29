@@ -6,35 +6,41 @@ import { Link } from "react-router-dom";
 export default function HeaderLogged() {
   const [isLogged, setIsLogged] = useState(false);
   const token = localStorage.getItem("iat");
-  return (
-    <Container>
-      <div className="test">
-        <div className="header">
-          <Link className="logo-link" to="/">
-            <div className="logo-header">
-              <img src={Logo} alt="" />
-              <h1>My Sharing Base</h1>
-            </div>
-          </Link>
-          <nav>
-            <Link className="link" to="/storage">
-              Storage
+  var userAgent;
+  userAgent = navigator.userAgent.toLowerCase();
+  if (typeof orientation !== "undefined" || userAgent.indexOf("mobile") >= 0) {
+    alert("open in desktop");
+  } else {
+    return (
+      <Container>
+        <div className="test">
+          <div className="header">
+            <Link className="logo-link" to="/">
+              <div className="logo-header">
+                <img src={Logo} alt="" />
+                <h1>My Sharing Base</h1>
+              </div>
             </Link>
-            <Link
-              onClick={() => {
-                localStorage.removeItem("iat");
-                window.location.href = "login";
-              }}
-              className="link"
-              to="/login"
-            >
-              Logout
-            </Link>
-          </nav>
+            <nav>
+              <Link className="link" to="/storage">
+                Storage
+              </Link>
+              <Link
+                onClick={() => {
+                  localStorage.removeItem("iat");
+                  window.location.href = "login";
+                }}
+                className="link"
+                to="/login"
+              >
+                Logout
+              </Link>
+            </nav>
+          </div>
         </div>
-      </div>
-    </Container>
-  );
+      </Container>
+    );
+  }
 }
 
 const Container = styled.div`
@@ -82,10 +88,5 @@ const Container = styled.div`
     color: white;
     margin: 0;
     text-align: center;
-  }
-  @media screen and (max-width: 1280px) {
-    .test {
-      display: none;
-    }
   }
 `;

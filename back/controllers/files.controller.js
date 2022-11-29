@@ -24,8 +24,11 @@ module.exports.upload = (req, res) => {
           const buffer = new Buffer.from(data, "base64");
           const dateToString = Date.now().toString();
           const tmpFilename =
-            "tmp_" + dateToString.substr(0, 4) + originalName + "." + ext;
-
+            "tmp_" +
+            dateToString.substr(0, 4) +
+            originalName.replace(" ", "_") +
+            "." +
+            ext;
           fs.access(`files/${userId}`, function (notFound) {
             if (notFound) {
               fs.mkdirSync(`files/${userId}`);
@@ -41,7 +44,7 @@ module.exports.upload = (req, res) => {
             fs.appendFileSync(`./files/${userId}/` + tmpFilename, buffer);
             if (lastChunk) {
               const finalFilename =
-                Date.now() + " - " + originalName + "." + ext;
+                Date.now() + "_" + originalName.replace(" ", "_") + "." + ext;
               fs.renameSync(
                 `./files/${userId}/` + tmpFilename,
                 `./files/${userId}/` + finalFilename

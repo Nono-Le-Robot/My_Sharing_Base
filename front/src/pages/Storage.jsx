@@ -21,27 +21,33 @@ export default function Storage() {
   function stateOfDetection(state) {
     setUpdateListOfFile(state);
   }
+  var userAgent;
+  userAgent = navigator.userAgent.toLowerCase();
 
-  return (
-    <>
-      <Container>
-        <div className="main-storage">
-          <div className="upload">
-            <Upload newFileDetected={stateOfDetection} />
+  if (typeof orientation !== "undefined" || userAgent.indexOf("mobile") >= 0) {
+    alert("open in desktop");
+  } else {
+    return (
+      <>
+        <Container>
+          <div className="main-storage">
+            <div className="upload">
+              <Upload newFileDetected={stateOfDetection} />
+            </div>
+            <div className="my-files">
+              <MyStorage isNewFile={updateListOfFile} />
+            </div>
           </div>
-          <div className="my-files">
-            <MyStorage isNewFile={updateListOfFile} />
+          <div className="mobile">
+            <h2>
+              Only available on desktop for the moment... (work on mobile app)
+            </h2>
           </div>
-        </div>
-        <div className="mobile">
-          <h2>
-            Only available on desktop for the moment... (work on mobile app)
-          </h2>
-        </div>
-      </Container>
-      <ToastContainer />
-    </>
-  );
+        </Container>
+        <ToastContainer />
+      </>
+    );
+  }
 }
 
 const Container = styled.div`
@@ -119,23 +125,5 @@ const Container = styled.div`
   .title {
     margin-top: 3rem;
     font-size: 2.4rem;
-  }
-  @media screen and (max-width: 1280px) {
-    .mobile {
-      height: 90vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      h2 {
-        margin: 0 1rem;
-        color: white;
-        font-size: 2rem;
-        text-align: center;
-      }
-    }
-    .main-storage {
-      display: none;
-    }
   }
 `;
