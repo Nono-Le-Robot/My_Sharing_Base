@@ -19,7 +19,10 @@ export default function Storage() {
   };
 
   function stateOfDetection(state) {
-    setUpdateListOfFile(state);
+    setUpdateListOfFile(state + Date.now);
+    setTimeout(() => {
+      setUpdateListOfFile(state + Date.now);
+    }, 1000);
   }
   var userAgent;
   userAgent = navigator.userAgent.toLowerCase();
@@ -38,11 +41,6 @@ export default function Storage() {
               <MyStorage isNewFile={updateListOfFile} />
             </div>
           </div>
-          <div className="mobile">
-            <h2>
-              Only available on desktop for the moment... (work on mobile app)
-            </h2>
-          </div>
         </Container>
         <ToastContainer />
       </>
@@ -51,6 +49,9 @@ export default function Storage() {
 }
 
 const Container = styled.div`
+  * {
+    user-select: none;
+  }
   /* overflow: hidden; */
   overflow: hidden;
   display: flex;

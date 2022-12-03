@@ -2,8 +2,9 @@ const fs = require("fs");
 const md5 = require("md5");
 const userModel = require("../models/auth.model");
 const jwt = require("jsonwebtoken");
+const sharp = require("sharp");
 
-module.exports.upload = (req, res) => {
+module.exports.upload = async (req, res) => {
   const token = req.query.uploadBy;
   if (token) {
     jwt.verify(
@@ -49,7 +50,30 @@ module.exports.upload = (req, res) => {
                 `./files/${userId}/` + tmpFilename,
                 `./files/${userId}/` + finalFilename
               );
-              res.json({ finalFilename });
+
+              if (
+                ext === "png" ||
+                ext === "jpg" ||
+                ext === "jpeg" ||
+                ext === "gif"
+              ) {
+                fs.access(`files/${userId}/prev`, function (notFound) {
+                  if (notFound) {
+                    fs.mkdirSync(`files/${userId}/prev`);
+                  }
+                });
+
+                let outputPrevImage = `./files/${userId}/prev/${finalFilename}`;
+                sharp(`./files/${userId}/${finalFilename}`)
+                  .resize({ height: 600, width: 800 })
+                  .toFile(outputPrevImage)
+                  .then(function (newFileInfo) {
+                    res.json({ finalFilename });
+                  })
+                  .catch((err) => console.log(err));
+              } else {
+                res.json({ finalFilename });
+              }
             } else {
               res.json("ok");
             }
@@ -83,6 +107,7 @@ module.exports.add = (req, res) => {
                     username: req.body.username,
                     name: req.body.filename,
                     link: req.body.link,
+                    prev: req.body.prev,
                     size: req.body.size,
                     format: req.body.format,
                   },
@@ -152,7 +177,18 @@ module.exports.removeFiles = (req, res) => {
           .select("-password")
           .then((updatedPost) => {
             fs.unlink(`./files/${userId}/${req.body.fileName}`, () => {
-              res.json({ msg: "upload in DB OK" });
+              if (
+                req.body.fileName.substr(-3) === "png" ||
+                req.body.fileName.substr(-3) === "jpg" ||
+                req.body.fileName.substr(-4) === "jpeg" ||
+                req.body.fileName.substr(-3) === "gif"
+              ) {
+                fs.unlink(`./files/${userId}/prev/${req.body.fileName}`, () => {
+                  res.json({ msg: "upload in DB OK" });
+                });
+              } else {
+                res.json({ msg: "upload in DB OK" });
+              }
             });
           })
           .catch((err) => res.json({ err: err }));

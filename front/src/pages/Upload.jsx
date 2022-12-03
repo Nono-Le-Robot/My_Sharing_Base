@@ -8,9 +8,11 @@ import DragDropIcon from "../assets/drag-and-drop.png";
 import { addFiles, uploadRoute, host } from "../utils/APIRoutes";
 import PauseIcon from "../assets/pause.png";
 import { render } from "vue";
+import { QuadraticBezierCurve } from "three";
+import GearIcon from "../assets/gear.png";
 
 export default function Upload(props) {
-  const chunkSize = 30000 * 1024;
+  const chunkSize = 10000 * 1024;
   const [fixedNumOfDroppedFiles, setFixedNumOfDroppedFiles] = useState(0);
   const [indexOfUpload, setIndexOfUpload] = useState(1);
   const [dropzoneActive, setDropzoneActive] = useState(false);
@@ -18,7 +20,13 @@ export default function Upload(props) {
   const [currentFileIndex, setCurrentFileIndex] = useState(null);
   const [lastUploadedFileIndex, setLastUploadedFileIndex] = useState(null);
   const [currentChunkIndex, setCurrentChunkIndex] = useState(null);
-
+  const [startDateUpload, setStartDateUpload] = useState(null);
+  const [timeToUploadChunk, setTimeToUploadChunk] = useState(null);
+  const [uploadSince, setUploadSince] = useState(0);
+  const [userUploadSpeed, setUserUploadSpeed] = useState(0);
+  const [speedLog, setSpeedLog] = useState([]);
+  const [userSpeedAverage, setUserSpeedAverage] = useState(0);
+  let sum = 0;
   const toastOptions = {
     position: "bottom-right",
     autoClose: 3000,
@@ -28,14 +36,15 @@ export default function Upload(props) {
   };
 
   function handleDrop(e) {
+    setSpeedLog([]);
     e.preventDefault();
     props.newFileDetected("");
     setFiles([...files, ...e.dataTransfer.files]);
-    console.log(files);
     setFixedNumOfDroppedFiles(e.dataTransfer.files.length);
   }
 
   function readAndUploadCurrentChunk() {
+    setStartDateUpload(Date.now());
     const reader = new FileReader();
     const file = files[currentFileIndex];
     if (!file) {
@@ -59,6 +68,22 @@ export default function Upload(props) {
     params.set("totalChunks", Math.ceil(file.size / chunkSize));
     const headers = { "Content-Type": "application/octet-stream" };
     const url = uploadRoute + params.toString();
+
+    setUploadSince((Date.now() - startDateUpload) / 1000);
+    setTimeToUploadChunk(uploadSince);
+    let calcSpeed = (1 * chunkSize) / timeToUploadChunk;
+    setUserUploadSpeed((calcSpeed / 1000000).toFixed(2));
+
+    if (parseFloat(userUploadSpeed) != Infinity) {
+      if (parseFloat(userUploadSpeed) != 0)
+        setSpeedLog((current) => [...current, parseFloat(userUploadSpeed)]);
+    }
+    for (let index = 0; index < speedLog.length; index++) {
+      sum += speedLog[index];
+    }
+    let calcAverage = sum / speedLog.length;
+    setUserSpeedAverage(calcAverage.toFixed(2));
+
     axios
       .post(url, data, { headers })
       .then((response) => {
@@ -91,22 +116,26 @@ export default function Upload(props) {
           );
         }
         if (isLastChunk) {
-          setTimeout(() => {
-            props.newFileDetected(file.name);
-          }, 200);
+          props.newFileDetected(Date.now() + file.name);
 
           file.finalFilename = response.data.finalFilename;
           const userId = localStorage.getItem("userId");
           setLastUploadedFileIndex(currentFileIndex);
           setCurrentChunkIndex(null);
-          axios.post(addFiles, {
-            token: localStorage.getItem("iat"),
-            username: localStorage.getItem("username"),
-            link: `${host}/files/${userId}/${file.finalFilename}`,
-            filename: file.finalFilename,
-            size: file.size,
-            format: file.type,
-          });
+          axios
+            .post(addFiles, {
+              token: localStorage.getItem("iat"),
+              username: localStorage.getItem("username"),
+              link: `${host}/files/${userId}/${file.finalFilename}`,
+              prev: `${host}/files/${userId}/prev/${file.finalFilename}`,
+              filename: file.finalFilename,
+              size: file.size,
+              format: file.type,
+            })
+            .then(() => {})
+            .catch((err) => {
+              console.log(err);
+            });
         } else {
           setCurrentChunkIndex(currentChunkIndex + 1);
         }
@@ -152,6 +181,7 @@ export default function Upload(props) {
   useEffect(() => {
     if (currentChunkIndex !== null) {
       readAndUploadCurrentChunk();
+    } else {
     }
   }, [currentChunkIndex]);
   var userAgent;
@@ -215,7 +245,27 @@ export default function Upload(props) {
             >
               {indexOfUpload}/{fixedNumOfDroppedFiles}
             </p> */}
-
+            <h2
+              className={
+                currentFileIndex === null ? "hidden" : "user-speed-upload"
+              }
+            >
+              {currentFileIndex === null ||
+              userSpeedAverage === "NaN" ||
+              userSpeedAverage === 0 ? (
+                <div className="speed-info">
+                  <p>Average Speed :</p>
+                  <img className="gear" src={GearIcon} alt="" srcset="" />
+                  <p> Mo/s</p>
+                </div>
+              ) : (
+                <div className="speed-info">
+                  <p>Average Speed : </p>
+                  <p>{userSpeedAverage}</p>
+                  <p> Mo/s</p>
+                </div>
+              )}
+            </h2>
             <img
               onClick={() => alert('Paused, click "ok" to resume.')}
               src={PauseIcon}
@@ -229,9 +279,11 @@ export default function Upload(props) {
                 if (file.finalFilename) {
                   progress = 100;
                   const deleteDiv = document.querySelectorAll(".animation");
-                  setTimeout(() => {
-                    deleteDiv[fileIndex].remove();
-                  }, 600);
+                  if (deleteDiv[fileIndex]) {
+                    setTimeout(() => {
+                      deleteDiv[fileIndex].remove();
+                    }, 600);
+                  }
                 } else {
                   const uploading = fileIndex === currentFileIndex;
                   const chunks = Math.ceil(file.size / chunkSize);
@@ -270,6 +322,36 @@ export default function Upload(props) {
 }
 
 const Container = styled.div`
+  @keyframes slidein {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .speed-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+  .gear {
+    animation: 2s linear infinite slidein;
+    width: 1.2rem;
+  }
+  .hidden {
+    display: none;
+  }
+  .user-speed-upload {
+    color: white;
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 1.3rem;
+  }
+  * {
+    user-select: none;
+  }
   overflow-y: scroll;
   .pause-icon {
     margin-top: 20px;
@@ -361,7 +443,9 @@ const Container = styled.div`
     color: black;
     font-weight: bold;
     font-size: 1.1rem;
+    transition: 0.4s;
   }
+
   .done {
     display: none;
   }

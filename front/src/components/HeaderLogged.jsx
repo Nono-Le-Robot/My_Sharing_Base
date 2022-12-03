@@ -44,6 +44,9 @@ export default function HeaderLogged() {
 }
 
 const Container = styled.div`
+  * {
+    user-select: none;
+  }
   width: 100vw;
   height: 10vh;
   background-color: #14143b;

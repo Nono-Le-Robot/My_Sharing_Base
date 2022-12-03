@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import ShareLogo from "../assets/sharing.png";
-import { motion } from "framer-motion";
+
 export default function Login() {
   const navigate = useNavigate();
   const getStarted = () => {
@@ -33,6 +32,9 @@ export default function Login() {
 }
 
 const Container = styled.div`
+  * {
+    user-select: none;
+  }
   height: 90vh;
   width: 100vw;
   display: flex;

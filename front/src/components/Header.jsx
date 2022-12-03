@@ -21,7 +21,6 @@ export default function Header() {
               </div>
             </Link>
             <nav>
-              <div></div>
               <Link className="link" to="/register">
                 Register
               </Link>
@@ -37,6 +36,9 @@ export default function Header() {
 }
 
 const Container = styled.div`
+  * {
+    user-select: none;
+  }
   width: 100vw;
   height: 10vh;
   background-color: #14143b;

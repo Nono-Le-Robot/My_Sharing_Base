@@ -4,21 +4,19 @@ import styled from "styled-components";
 import axios from "axios";
 import { myFilesRoute, removeFiles } from "../utils/APIRoutes";
 import RemoveIcon from "../assets/remove.png";
-import RightClickIcon from "../assets/right-click.png";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import { toast } from "react-toastify";
-import PdfLogo from "../assets/icon_format/pdf-file.png";
-import LnkLogo from "../assets/icon_format/lnk-file.png";
-import JpgLogo from "../assets/icon_format/jpg-file.png";
-import OtherLogo from "../assets/icon_format/other-file.png";
-// import ImageLogo from "../assets/icon_format/image-file.png";
-// import VideoLogo from "../assets/icon_format/video-file.png";
-// import OtherLogo from "../assets/icon_format/other-file.png";
-// import ZipFile from "../assets/icon_format/zip-file.png";
+import NoImgPreview from "../assets/no-img-preview.png";
+import ReactPlayer from "react-player";
+import InfiniteIcon from "../assets/infinity.png";
 
 export default function MyStorage(props) {
   const navigate = useNavigate();
   const [generatedLink, setGeneratedLink] = useState("");
   const [isLoaded, setIsLoaded] = useState(false);
+  const [userFiles, setUserFiles] = useState([]);
+  const [filesInStorage, setFilesInStorage] = useState(0);
+  const [userStorage, setUserStorage] = useState(0);
   useEffect(() => {
     setTimeout(() => {
       setIsLoaded(true);
@@ -35,12 +33,17 @@ export default function MyStorage(props) {
         token: localStorage.getItem("iat"),
       })
       .then((result) => {
-        setUserFiles(result.data.files);
+        const userFilesData = result.data.files;
+        setUserFiles(userFilesData);
+        setFilesInStorage(userFilesData.length);
+        let totalSize = 0;
+        for (let index = 0; index < userFilesData.length; index++) {
+          totalSize = totalSize + userFilesData[index].size;
+          setUserStorage(totalSize / 1000000000);
+        }
       })
       .catch();
   };
-
-  const [userFiles, setUserFiles] = useState([]);
 
   useEffect(() => {
     axios
@@ -48,7 +51,14 @@ export default function MyStorage(props) {
         token: localStorage.getItem("iat"),
       })
       .then((result) => {
-        setUserFiles(result.data.files);
+        const userFilesData = result.data.files;
+        setUserFiles(userFilesData);
+        setFilesInStorage(userFilesData.length);
+        let totalSize = 0;
+        for (let index = 0; index < userFilesData.length; index++) {
+          totalSize = totalSize + userFilesData[index].size;
+          setUserStorage(totalSize / 1000000000);
+        }
       })
       .catch();
   }, []);
@@ -59,7 +69,14 @@ export default function MyStorage(props) {
         token: localStorage.getItem("iat"),
       })
       .then((result) => {
-        setUserFiles(result.data.files);
+        const userFilesData = result.data.files;
+        setUserFiles(userFilesData);
+        setFilesInStorage(userFilesData.length);
+        let totalSize = 0;
+        for (let index = 0; index < userFilesData.length; index++) {
+          totalSize = totalSize + userFilesData[index].size;
+          setUserStorage(totalSize / 1000000000);
+        }
       })
       .catch();
   }, [props.isNewFile]);
@@ -79,7 +96,7 @@ export default function MyStorage(props) {
         >
           <div className={isLoaded ? "file-loaded" : "file-loader"}>
             <div>
-              <div class="lds-ellipsis">
+              <div className="lds-ellipsis">
                 <div></div>
                 <div></div>
                 <div></div>
@@ -87,119 +104,160 @@ export default function MyStorage(props) {
               </div>
             </div>
           </div>
+
           <div className="generated-link">
             <p>Link to your file : </p>
             <input type="text" value={generatedLink} />
-            <button
-              onClick={() => {
-                setGeneratedLink("");
-                const linkInput = document.querySelector(".generated-link");
-                linkInput.style.display = "none";
-              }}
-              className="back-btn"
-            >
-              Back
-            </button>
-          </div>
-          <div className="rename-popup">
-            <p>New name : </p>
-            <input
-              className="rename-input"
-              type="text"
-              placeholder={"ancienNomDeFichier.JPG"}
-            />
-            <div className="btns-rename">
+            <div id="link-div">
+              <CopyToClipboard
+                text={generatedLink}
+                onCopy={() => {
+                  const copyBtn = document.querySelector(".copy-btn");
+                  copyBtn.textContent = "Copied";
+                  copyBtn.style.color = "#ffffff";
+                  copyBtn.style.background = "#0e9401";
+                  copyBtn.style.width = "auto";
+                  copyBtn.style.padding = "10px 20px";
+                }}
+              >
+                <button className="copy-btn">Copy</button>
+              </CopyToClipboard>
               <button
                 onClick={() => {
-                  const renamePopUp = document.querySelector(".rename-popup");
-                  renamePopUp.style.display = "none";
+                  const copyBtn = document.querySelector(".copy-btn");
+                  copyBtn.style.background = "#044101";
+                  copyBtn.textContent = "Copy";
+                  copyBtn.style.color = "#ffffff";
+                  copyBtn.style.padding = "10px 20px";
+                  setGeneratedLink("");
+                  const linkInput = document.querySelector(".generated-link");
+                  linkInput.style.display = "none";
+                  const rightMenu = document.querySelector(".r-menu-file");
+                  rightMenu.style.display = "none";
                 }}
-                className="cancel-btn"
+                className="back-btn"
               >
-                Cancel
+                Back
               </button>
-              <button className="confirm-btn">Confirm</button>
             </div>
           </div>
 
           <div className="r-menu-file">
-            {/* <div className="menu-file top-menu in-progress" id="rename-menu">
-              Preview
-            </div> */}
-            <div
-              className="menu-file in-progress top-menu"
-              id="rename-menu"
-              onClick={() => {
-                const renamePopUp = document.querySelector(".rename-popup");
-                renamePopUp.style.display = "flex";
-              }}
-            >
-              Rename
-            </div>
             <div
               onClick={() => {
                 const linkInput = document.querySelector(".generated-link");
                 linkInput.style.display = "flex";
+                const rightMenu = document.querySelector(".r-menu-file");
+
+                rightMenu.style.display = "none";
               }}
-              className="menu-file bottom-menu"
+              className="menu-file"
               id="rename-menu"
             >
               Get link
             </div>
           </div>
-          <div
-            onClick={() => {
-              const rightMenu = document.querySelector(".r-menu-file");
-
-              rightMenu.style.display = "none";
-            }}
-            className="main"
-            id="main"
-          >
+          <div onClick={() => {}} className="main" id="main">
             <h2 className="title">My Storage</h2>
 
             <div className="flex-items">
               <div className="items">
                 {userFiles.map((file, fileIndex) => (
-                  <div
-                    key={fileIndex}
-                    className="item"
-                    onContextMenu={(e) => {
-                      setGeneratedLink(file.link);
-                      const rightMenu = document.querySelector(".r-menu-file");
-                      e.preventDefault();
-                      rightMenu.style.display = "flex";
-                      rightMenu.style.top = `${e.clientY - 20}px`;
-                      rightMenu.style.left = `${e.clientX - 20}px`;
-                      rightMenu.addEventListener("mouseleave", () => {
+                  <>
+                    <div
+                      key={fileIndex}
+                      className="item"
+                      onContextMenu={(e) => {
+                        setGeneratedLink(file.link);
                         const rightMenu =
                           document.querySelector(".r-menu-file");
-                        rightMenu.style.display = "none";
-                      });
-                    }}
-                  >
-                    <img
-                      onClick={() => {
-                        console.log(file.name.slice(-3));
-                        removeItem(file);
+                        e.preventDefault();
+                        rightMenu.style.display = "flex";
+                        rightMenu.style.top = `${e.clientY - 30}px`;
+                        rightMenu.style.left = `${e.clientX - 30}px`;
+                        rightMenu.addEventListener("mouseleave", () => {
+                          const rightMenu2 =
+                            document.querySelector(".r-menu-file");
+                          rightMenu2.style.display = "none";
+                        });
                       }}
-                      className="remove-icon"
-                      src={RemoveIcon}
-                      alt="icon de suppression en forme de croix. permet de supprimer le fichier"
-                    />
-
-                    <a
-                      download
-                      href={file.link}
-                      className="texte-download item-body"
                     >
-                      <p className="hidden"> {file.name.substring(14)}</p>
-                    </a>
-                  </div>
+                      <img
+                        onClick={() => {
+                          removeItem(file);
+                        }}
+                        className="remove-icon"
+                        src={RemoveIcon}
+                        alt="icon de suppression en forme de croix. permet de supprimer le fichier"
+                      />
+                      <a
+                        download
+                        href={file.link}
+                        target="_blank"
+                        className="texte-download item-body"
+                      >
+                        <div className="card-file">
+                          <div className="card-file-head">
+                            {file.link.substr(-3) === "png" ||
+                            file.link.substr(-3) === "jpg" ||
+                            file.link.substr(-3) === "gif" ||
+                            file.link.substr(-3) === "bmp" ||
+                            file.link.substr(-3) === "svg" ||
+                            file.link.substr(-4) === "heif" ||
+                            file.link.substr(-4) === "jpeg" ? (
+                              <img className="img-prev" src={file.prev} />
+                            ) : (
+                              <></>
+                            )}
+                            {file.link.substr(-3) === "mp4" ? (
+                              <ReactPlayer
+                                className="vid-prev"
+                                width="100%"
+                                height="6.4rem"
+                                url={file.link}
+                                controls
+                              />
+                            ) : (
+                              <></>
+                            )}
+                            {file.link.substr(-3) !== "png" &&
+                            file.link.substr(-3) !== "jpg" &&
+                            file.link.substr(-3) !== "gif" &&
+                            file.link.substr(-3) !== "bmp" &&
+                            file.link.substr(-3) !== "svg" &&
+                            file.link.substr(-4) !== "heif" &&
+                            file.link.substr(-4) !== "jpeg" &&
+                            file.link.substr(-3) !== "mp4" ? (
+                              <img className="no-img-prev" src={NoImgPreview} />
+                            ) : (
+                              <></>
+                            )}
+                          </div>
+                          <div className="card-file-body">
+                            <p className="file-name">
+                              {" "}
+                              {file.name.substring(14)}
+                            </p>
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                  </>
                 ))}
-                <div id="info-footer">
-                  <p>Left click : Download</p>
-                  <p>Right click : Edit</p>
+                <h2 className={filesInStorage === 0 ? "" : "hidden"}>
+                  Drop your files in the upload section to see them appear here.
+                </h2>
+                <div className={filesInStorage !== 0 ? "user-info" : "hidden"}>
+                  <h3>Total Files : {filesInStorage}</h3>
+                  <p>|</p>
+                  <h3 className="total-storage">
+                    Storage :{" "}
+                    {userStorage < 0.001
+                      ? `${userStorage.toFixed(5)}`
+                      : `${userStorage.toFixed(3)}`}{" "}
+                    GB /{" "}
+                    <img className="infinite-logo" src={InfiniteIcon} alt="" />
+                  </h3>
                 </div>
               </div>
             </div>
@@ -211,6 +269,96 @@ export default function MyStorage(props) {
 }
 
 const Container = styled.div`
+  .total-storage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+  .infinite-logo {
+    width: 2rem;
+    position: relative;
+    top: -2px;
+    left: 1px;
+  }
+  .vid-prev {
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: 0.3s;
+
+    &:hover {
+      transform: scale(1.32, 1.6) translateY(11px) translateX(0px);
+      transition: 0.3s;
+    }
+  }
+  .file-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    height: 20px;
+  }
+  .img-prev {
+    position: relative;
+    left: -2px;
+    width: 10rem;
+    object-fit: cover;
+    height: 6rem;
+    border-radius: 0.5rem;
+    transition: 0.3s;
+
+    &:hover {
+      width: 15.2rem;
+      height: 10.2rem;
+      transform: translateY(27px);
+      transition: 0.3s;
+      margin-bottom: 15px;
+    }
+  }
+  .no-img-prev {
+    position: relative;
+    left: -2px;
+    width: 10rem;
+    object-fit: cover;
+    height: 6rem;
+    border-radius: 0.5rem;
+    transition: 0.3s;
+  }
+  .card-file {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-evenly;
+
+    gap: 1rem;
+  }
+  .card-file-body {
+    width: 80%;
+    overflow: hidden;
+  }
+
+  .hidden {
+    display: none;
+  }
+  .user-info {
+    position: relative;
+    left: 50px;
+    width: 40vw;
+    margin-bottom: 3rem;
+    margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5rem;
+  }
+  #link-div {
+    display: flex;
+    gap: 3rem;
+    align-items: center;
+    justify-content: center;
+  }
+  * {
+    user-select: none;
+  }
   #info-footer {
     margin-top: 20px;
     display: flex;
@@ -311,6 +459,16 @@ const Container = styled.div`
     border-radius: 0.4rem;
     &:hover {
       background-color: #710707;
+    }
+  }
+
+  .copy-btn {
+    background-color: #044101;
+    width: 100px;
+    height: 50px;
+    border-radius: 0.4rem;
+    &:hover {
+      background-color: #107107;
     }
   }
   .in-progress {
@@ -432,6 +590,7 @@ const Container = styled.div`
     padding: 1.2rem;
     font-weight: 800;
     transition: 0.2s;
+    border-radius: 0.5rem;
     width: 100%;
     background-color: #000000f0;
 
@@ -461,6 +620,7 @@ const Container = styled.div`
     height: auto;
   }
   .items {
+    width: 48vw;
     display: flex;
     align-items: flex-start;
     justify-content: center;
@@ -468,7 +628,7 @@ const Container = styled.div`
     padding-left: 2rem;
     padding-right: 2rem;
     flex-wrap: wrap;
-    padding-bottom: 13rem;
+    padding-bottom: 2rem;
   }
 
   @keyframes pop-item {
@@ -482,14 +642,124 @@ const Container = styled.div`
     }
   }
   .item {
+    border: 1px solid #000000;
     animation: 0.5s pop-item ease-in-out forwards;
     opacity: 0;
-
-    background: #5952d2;
+    height: 10rem;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    background-image: repeating-linear-gradient(
+        135deg,
+        rgba(69, 112, 255, 0.03) 0px,
+        rgba(69, 112, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 12px
+      ),
+      repeating-linear-gradient(
+        45deg,
+        rgba(69, 112, 255, 0.03) 0px,
+        rgba(69, 112, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 12px
+      ),
+      repeating-linear-gradient(
+        67.5deg,
+        rgba(69, 112, 255, 0.03) 0px,
+        rgba(69, 112, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 12px
+      ),
+      repeating-linear-gradient(
+        135deg,
+        rgba(69, 112, 255, 0.03) 0px,
+        rgba(69, 112, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 12px
+      ),
+      repeating-linear-gradient(
+        45deg,
+        rgba(69, 112, 255, 0.03) 0px,
+        rgba(69, 112, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 12px
+      ),
+      repeating-linear-gradient(
+        112.5deg,
+        rgba(69, 112, 255, 0.03) 0px,
+        rgba(69, 112, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 12px
+      ),
+      repeating-linear-gradient(
+        112.5deg,
+        rgba(69, 112, 255, 0.03) 0px,
+        rgba(69, 112, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 12px
+      ),
+      repeating-linear-gradient(
+        45deg,
+        rgba(69, 112, 255, 0.03) 0px,
+        rgba(69, 112, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 12px
+      ),
+      repeating-linear-gradient(
+        22.5deg,
+        rgba(69, 112, 255, 0.03) 0px,
+        rgba(69, 112, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 12px
+      ),
+      repeating-linear-gradient(
+        45deg,
+        rgba(69, 112, 255, 0.03) 0px,
+        rgba(69, 112, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 12px
+      ),
+      repeating-linear-gradient(
+        22.5deg,
+        rgba(69, 112, 255, 0.03) 0px,
+        rgba(69, 112, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 12px
+      ),
+      repeating-linear-gradient(
+        135deg,
+        rgba(69, 112, 255, 0.03) 0px,
+        rgba(69, 112, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 12px
+      ),
+      repeating-linear-gradient(
+        157.5deg,
+        rgba(69, 112, 255, 0.03) 0px,
+        rgba(69, 112, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 12px
+      ),
+      repeating-linear-gradient(
+        67.5deg,
+        rgba(69, 112, 255, 0.03) 0px,
+        rgba(69, 112, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 12px
+      ),
+      repeating-linear-gradient(
+        67.5deg,
+        rgba(69, 112, 255, 0.03) 0px,
+        rgba(69, 112, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 12px
+      ),
+      linear-gradient(90deg, rgb(31, 24, 110), rgb(20, 52, 118));
     box-shadow: 2px 2px 10px #000000d5;
     color: black;
     font-weight: 600;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     border-radius: 0.6rem;
     transition: 0.2s;
     &:hover {
@@ -503,21 +773,24 @@ const Container = styled.div`
     margin-bottom: 3rem;
   }
   .remove-icon {
-    width: 1.3rem;
+    width: 1.6rem;
     position: absolute;
-    left: 100%;
-    top: -17%;
+    z-index: 999;
+    left: 99%;
+    top: -7%;
     transform: translateX(-12px);
     display: flex;
     justify-content: flex-end;
   }
   .texte-download {
-    display: flex;
+    width: 15rem;
+    display: block;
     align-items: center;
     justify-content: center;
     text-decoration: none;
     display: block;
-    padding: 0.9rem 2rem 0.9rem 2.2rem;
+    font-size: 1rem;
+    padding: 0rem;
     border-radius: 0 0 0.4rem 0.4rem;
     color: #ffffff;
     margin: 0;
