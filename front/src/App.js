@@ -13,7 +13,7 @@ export default function App() {
   const token = localStorage.getItem("iat");
   if (token) {
     return (
-      <BrowserRouter>
+      <BrowserRouter basename="my-sharing-base/">
         <HeaderLogged />
         <Routes>
           <Route path="/storage" element={<Storage />} />
@@ -27,7 +27,7 @@ export default function App() {
     );
   } else {
     return (
-      <BrowserRouter>
+      <BrowserRouter basename="my-sharing-base/">
         <Header />
         <Routes>
           <Route path="/storage" element={<Storage />} />
@@ -41,3 +41,4 @@ export default function App() {
     );
   }
 }
+// basename="my-sharing-base/"

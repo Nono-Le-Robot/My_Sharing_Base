@@ -17,6 +17,7 @@ export default function MyStorage(props) {
   const [userFiles, setUserFiles] = useState([]);
   const [filesInStorage, setFilesInStorage] = useState(0);
   const [userStorage, setUserStorage] = useState(0);
+  const [folderName, setFolderName] = useState("");
   useEffect(() => {
     setTimeout(() => {
       setIsLoaded(true);
@@ -24,25 +25,27 @@ export default function MyStorage(props) {
   }, []);
 
   const removeItem = async (file) => {
-    await axios.post(removeFiles, {
-      iat: localStorage.getItem("iat"),
-      fileName: file.name,
-    });
-    await axios
-      .post(myFilesRoute, {
-        token: localStorage.getItem("iat"),
-      })
-      .then((result) => {
-        const userFilesData = result.data.files;
-        setUserFiles(userFilesData);
-        setFilesInStorage(userFilesData.length);
-        let totalSize = 0;
-        for (let index = 0; index < userFilesData.length; index++) {
-          totalSize = totalSize + userFilesData[index].size;
-          setUserStorage(totalSize / 1000000000);
-        }
-      })
-      .catch();
+    if (window.confirm("Do you really want to delete this file ?")) {
+      await axios.post(removeFiles, {
+        iat: localStorage.getItem("iat"),
+        fileName: file.name,
+      });
+      await axios
+        .post(myFilesRoute, {
+          token: localStorage.getItem("iat"),
+        })
+        .then((result) => {
+          const userFilesData = result.data.files;
+          setUserFiles(userFilesData);
+          setFilesInStorage(userFilesData.length);
+          let totalSize = 0;
+          for (let index = 0; index < userFilesData.length; index++) {
+            totalSize = totalSize + userFilesData[index].size;
+            setUserStorage(totalSize / 1000000000);
+          }
+        })
+        .catch();
+    }
   };
 
   useEffect(() => {
@@ -81,194 +84,278 @@ export default function MyStorage(props) {
       .catch();
   }, [props.isNewFile]);
 
-  var userAgent;
-  userAgent = navigator.userAgent.toLowerCase();
-
-  if (typeof orientation !== "undefined" || userAgent.indexOf("mobile") >= 0) {
-    alert("open in desktop");
-  } else {
-    return (
-      <>
-        <Container
-          onContextMenu={(e) => {
-            e.preventDefault();
-          }}
-        >
-          <div className={isLoaded ? "file-loaded" : "file-loader"}>
-            <div>
-              <div className="lds-ellipsis">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-              </div>
+  return (
+    <>
+      <Container
+        onContextMenu={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+        }}
+      >
+        <div className={isLoaded ? "file-loaded" : "file-loader"}>
+          <div>
+            <div className="lds-ellipsis">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
             </div>
           </div>
-
-          <div className="generated-link">
-            <p>Link to your file : </p>
-            <input type="text" value={generatedLink} />
-            <div id="link-div">
-              <CopyToClipboard
-                text={generatedLink}
-                onCopy={() => {
-                  const copyBtn = document.querySelector(".copy-btn");
-                  copyBtn.textContent = "Copied";
-                  copyBtn.style.color = "#ffffff";
-                  copyBtn.style.background = "#0e9401";
-                  copyBtn.style.width = "auto";
-                  copyBtn.style.padding = "10px 20px";
-                }}
-              >
-                <button className="copy-btn">Copy</button>
-              </CopyToClipboard>
-              <button
-                onClick={() => {
-                  const copyBtn = document.querySelector(".copy-btn");
-                  copyBtn.style.background = "#044101";
-                  copyBtn.textContent = "Copy";
-                  copyBtn.style.color = "#ffffff";
-                  copyBtn.style.padding = "10px 20px";
-                  setGeneratedLink("");
-                  const linkInput = document.querySelector(".generated-link");
-                  linkInput.style.display = "none";
-                  const rightMenu = document.querySelector(".r-menu-file");
-                  rightMenu.style.display = "none";
-                }}
-                className="back-btn"
-              >
-                Back
-              </button>
-            </div>
-          </div>
-
-          <div className="r-menu-file">
-            <div
+        </div>
+        <div className="generated-link">
+          <p>Link to your file : </p>
+          <input type="text" value={generatedLink} />
+          <div id="link-div">
+            <button
               onClick={() => {
+                const copyBtn = document.querySelector(".confirm-btn");
+                copyBtn.style.background = "#044101";
+                copyBtn.textContent = "Copy";
+                copyBtn.style.color = "#ffffff";
+                copyBtn.style.padding = "10px 20px";
+                setGeneratedLink("");
                 const linkInput = document.querySelector(".generated-link");
-                linkInput.style.display = "flex";
+                linkInput.style.display = "none";
                 const rightMenu = document.querySelector(".r-menu-file");
-
                 rightMenu.style.display = "none";
               }}
-              className="menu-file"
-              id="rename-menu"
+              className="back-btn"
             >
-              Get link
-            </div>
+              Back
+            </button>
+            <CopyToClipboard
+              text={generatedLink}
+              onCopy={() => {
+                const copyBtn = document.querySelector(".confirm-btn");
+                copyBtn.textContent = "Copied";
+                copyBtn.style.color = "#ffffff";
+                copyBtn.style.background = "#0e9401";
+                copyBtn.style.width = "auto";
+                copyBtn.style.padding = "10px 20px";
+              }}
+            >
+              <button className="confirm-btn">Copy</button>
+            </CopyToClipboard>
           </div>
-          <div onClick={() => {}} className="main" id="main">
-            <h2 className="title">My Storage</h2>
+        </div>
 
-            <div className="flex-items">
-              <div className="items">
-                {userFiles.map((file, fileIndex) => (
-                  <>
-                    <div
-                      key={fileIndex}
-                      className="item"
-                      onContextMenu={(e) => {
-                        setGeneratedLink(file.link);
-                        const rightMenu =
+        <div className="create-folder">
+          <p>Folder Name : </p>
+          <input
+            type="text"
+            value={folderName}
+            onChange={(e) => setFolderName(e.target.value)}
+          />
+          <div id="confirm-create-folder">
+            <button
+              onClick={() => {
+                const copyBtn = document.querySelector(".confirm-btn");
+                copyBtn.style.background = "#044101";
+                copyBtn.textContent = "Copy";
+                copyBtn.style.color = "#ffffff";
+                copyBtn.style.padding = "10px 20px";
+                setGeneratedLink("");
+                const linkInput = document.querySelector(".create-folder");
+                linkInput.style.display = "none";
+                const rightMenu = document.querySelector(".r-menu-global");
+                rightMenu.style.display = "none";
+                setFolderName("");
+              }}
+              className="back-btn"
+            >
+              Back
+            </button>
+            <button
+              onClick={(e) => {
+                //envoyer une requete post avec le nom du dossier
+                //creer le dossier en back avec le nom récupéré
+                //enregistrer le nom du dossier dans la bdd et l'ajouter en tete de liste (ou dans un array "folders" au meme niveau que ''files'')
+                //afficher le dossier en front
+                //essayer de faire un systeme de drag-drop des fichiers dans le dossier avec deplacement des fichiers en back
+
+                const copyBtn = document.querySelector(".confirm-btn");
+                copyBtn.style.background = "#044101";
+                copyBtn.style.color = "#ffffff";
+                copyBtn.style.padding = "10px 20px";
+                const linkInput = document.querySelector(".create-folder");
+                linkInput.style.display = "none";
+                const rightMenu = document.querySelector(".r-menu-global");
+                rightMenu.style.display = "none";
+                setFolderName("");
+              }}
+              className="confirm-btn"
+            >
+              Create Folder
+            </button>
+          </div>
+        </div>
+
+        {/* ========================= Right click menu =========================== */}
+        <div className="r-menu-file">
+          <div
+            onClick={() => {
+              const linkInput = document.querySelector(".generated-link");
+              linkInput.style.display = "flex";
+              const rightMenu = document.querySelector(".r-menu-file");
+
+              rightMenu.style.display = "none";
+            }}
+            className="menu-file"
+            id="rename-menu"
+          >
+            Get link
+          </div>
+        </div>
+
+        <div className="r-menu-global">
+          <div
+            onClick={() => {
+              const rightMenu = document.querySelector(".r-menu-global");
+              rightMenu.style.display = "none";
+              const linkInput = document.querySelector(".create-folder");
+              linkInput.style.display = "flex";
+            }}
+            className="menu-file-global"
+            id="global-menu"
+          >
+            Create Folder
+          </div>
+        </div>
+        <div
+          // onContextMenu={(e) => {
+          //   e.stopPropagation();
+          //   e.preventDefault();
+          //   const rightMenu = document.querySelector(".r-menu-global");
+          //   rightMenu.style.display = "flex";
+          //   rightMenu.style.top = `${e.clientY - 30}px`;
+          //   rightMenu.style.left = `${e.clientX - 30}px`;
+          //   rightMenu.addEventListener("mouseleave", () => {
+          //     const rightMenu2 = document.querySelector(".r-menu-global");
+          //     rightMenu2.style.display = "none";
+          //   });
+          // }}
+          className="main"
+          id="main"
+        >
+          {/* ================================================================================ */}
+          <h2 className="title">My Storage</h2>
+          <div className="mobile-upload">
+            <h3>In mobile version you only have access to your files.</h3>
+            <br />
+            <h3>to upload new files please use a computer</h3>
+          </div>
+
+          <div className="flex-items">
+            <div className="items">
+              {userFiles.map((file, fileIndex) => (
+                <>
+                  <div
+                    key={fileIndex}
+                    className="item"
+                    onContextMenu={(e) => {
+                      e.stopPropagation();
+                      setGeneratedLink(file.link);
+                      const rightMenu = document.querySelector(".r-menu-file");
+                      e.preventDefault();
+                      rightMenu.style.display = "flex";
+                      rightMenu.style.top = `${e.clientY - 30}px`;
+                      rightMenu.style.left = `${e.clientX - 30}px`;
+                      rightMenu.addEventListener("mouseleave", () => {
+                        const rightMenu2 =
                           document.querySelector(".r-menu-file");
-                        e.preventDefault();
-                        rightMenu.style.display = "flex";
-                        rightMenu.style.top = `${e.clientY - 30}px`;
-                        rightMenu.style.left = `${e.clientX - 30}px`;
-                        rightMenu.addEventListener("mouseleave", () => {
-                          const rightMenu2 =
-                            document.querySelector(".r-menu-file");
-                          rightMenu2.style.display = "none";
-                        });
+                        rightMenu2.style.display = "none";
+                      });
+                    }}
+                  >
+                    <img
+                      onClick={() => {
+                        removeItem(file);
                       }}
-                    >
-                      <img
-                        onClick={() => {
-                          removeItem(file);
-                        }}
-                        className="remove-icon"
-                        src={RemoveIcon}
-                        alt="icon de suppression en forme de croix. permet de supprimer le fichier"
-                      />
-                      <a
-                        download
-                        href={file.link}
-                        target="_blank"
-                        className="texte-download item-body"
-                      >
-                        <div className="card-file">
-                          <div className="card-file-head">
-                            {file.link.substr(-3) === "png" ||
-                            file.link.substr(-3) === "jpg" ||
-                            file.link.substr(-3) === "gif" ||
-                            file.link.substr(-3) === "bmp" ||
-                            file.link.substr(-3) === "svg" ||
-                            file.link.substr(-4) === "heif" ||
-                            file.link.substr(-4) === "jpeg" ? (
-                              <img className="img-prev" src={file.prev} />
-                            ) : (
-                              <></>
-                            )}
-                            {file.link.substr(-3) === "mp4" ? (
-                              <ReactPlayer
-                                className="vid-prev"
-                                width="100%"
-                                height="6.4rem"
-                                url={file.link}
-                                controls
-                              />
-                            ) : (
-                              <></>
-                            )}
-                            {file.link.substr(-3) !== "png" &&
-                            file.link.substr(-3) !== "jpg" &&
-                            file.link.substr(-3) !== "gif" &&
-                            file.link.substr(-3) !== "bmp" &&
-                            file.link.substr(-3) !== "svg" &&
-                            file.link.substr(-4) !== "heif" &&
-                            file.link.substr(-4) !== "jpeg" &&
-                            file.link.substr(-3) !== "mp4" ? (
-                              <img className="no-img-prev" src={NoImgPreview} />
-                            ) : (
-                              <></>
-                            )}
-                          </div>
-                          <div className="card-file-body">
-                            <p className="file-name">
-                              {" "}
-                              {file.name.substring(14)}
-                            </p>
-                          </div>
+                      className="remove-icon"
+                      src={RemoveIcon}
+                      alt="icon de suppression en forme de croix. permet de supprimer le fichier"
+                    />
+                    <div className="texte-download item-body">
+                      <div className="card-file">
+                        <div className="card-file-head">
+                          {file.link.substr(-3) === "png" ||
+                          file.link.substr(-3) === "jpg" ||
+                          file.link.substr(-3) === "gif" ||
+                          file.link.substr(-3) === "bmp" ||
+                          file.link.substr(-3) === "svg" ||
+                          file.link.substr(-4) === "heif" ||
+                          file.link.substr(-4) === "jpeg" ? (
+                            <img className="img-prev" src={file.prev} />
+                          ) : (
+                            <></>
+                          )}
+                          {file.link.substr(-3) === "mp4" ||
+                          file.link.substr(-3) === "avi" ||
+                          file.link.substr(-3) === "mkv" ? (
+                            <ReactPlayer
+                              className="vid-prev"
+                              width="100%"
+                              height="6.4rem"
+                              light
+                              url={file.link}
+                              controls
+                            />
+                          ) : (
+                            <></>
+                          )}
+                          {file.link.substr(-3) !== "png" &&
+                          file.link.substr(-3) !== "jpg" &&
+                          file.link.substr(-3) !== "gif" &&
+                          file.link.substr(-3) !== "bmp" &&
+                          file.link.substr(-3) !== "svg" &&
+                          file.link.substr(-4) !== "heif" &&
+                          file.link.substr(-4) !== "jpeg" &&
+                          file.link.substr(-3) !== "avi" &&
+                          file.link.substr(-3) !== "mkv" &&
+                          file.link.substr(-3) !== "mp4" ? (
+                            <img className="no-img-prev" src={NoImgPreview} />
+                          ) : (
+                            <></>
+                          )}
                         </div>
-                      </a>
+                        <div className="card-file-body">
+                          <p className="file-name">
+                            {" "}
+                            {file.name.substring(14)}
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                  </>
-                ))}
-                <h2 className={filesInStorage === 0 ? "" : "hidden"}>
-                  Drop your files in the upload section to see them appear here.
-                </h2>
-                <div className={filesInStorage !== 0 ? "user-info" : "hidden"}>
-                  <h3>Total Files : {filesInStorage}</h3>
-                  <p>|</p>
-                  <h3 className="total-storage">
-                    Storage :{" "}
-                    {userStorage < 0.001
-                      ? `${userStorage.toFixed(5)}`
-                      : `${userStorage.toFixed(3)}`}{" "}
-                    GB /{" "}
-                    <img className="infinite-logo" src={InfiniteIcon} alt="" />
-                  </h3>
-                </div>
+                  </div>
+                </>
+              ))}
+              <h2 className={filesInStorage === 0 ? "no-file" : "hidden"}>
+                Drop your files in the upload section to see them appear here.
+              </h2>
+              <div className={filesInStorage !== 0 ? "user-info" : "hidden"}>
+                <h3>Total Files : {filesInStorage}</h3>
+                <p>|</p>
+                <h3 className="total-storage">
+                  Storage :{" "}
+                  {userStorage < 0.001
+                    ? `${userStorage.toFixed(5)}`
+                    : `${userStorage.toFixed(3)}`}{" "}
+                  GB /{" "}
+                  <img className="infinite-logo" src={InfiniteIcon} alt="" />
+                </h3>
               </div>
             </div>
           </div>
-        </Container>
-      </>
-    );
-  }
+        </div>
+      </Container>
+    </>
+  );
 }
 
 const Container = styled.div`
+  .mobile-upload {
+    display: none;
+  }
   .total-storage {
     display: flex;
     align-items: center;
@@ -285,11 +372,6 @@ const Container = styled.div`
     border-radius: 0.5rem;
     overflow: hidden;
     transition: 0.3s;
-
-    &:hover {
-      transform: scale(1.32, 1.6) translateY(11px) translateX(0px);
-      transition: 0.3s;
-    }
   }
   .file-name {
     overflow: hidden;
@@ -351,6 +433,12 @@ const Container = styled.div`
     gap: 5rem;
   }
   #link-div {
+    display: flex;
+    gap: 3rem;
+    align-items: center;
+    justify-content: center;
+  }
+  #confirm-create-folder {
     display: flex;
     gap: 3rem;
     align-items: center;
@@ -439,7 +527,6 @@ const Container = styled.div`
   }
   .main {
     padding-bottom: 3rem;
-
     height: 90vh;
     width: 50vw;
     display: flex;
@@ -462,9 +549,11 @@ const Container = styled.div`
     }
   }
 
-  .copy-btn {
+  .confirm-btn {
     background-color: #044101;
-    width: 100px;
+    width: auto;
+    padding: 0 1.5rem;
+
     height: 50px;
     border-radius: 0.4rem;
     &:hover {
@@ -475,7 +564,7 @@ const Container = styled.div`
     text-decoration: line-through;
   }
   .generated-link {
-    background-color: #09013dcd;
+    background-color: #09013df2;
     position: absolute;
     left: 50%;
     width: 50vw;
@@ -490,13 +579,40 @@ const Container = styled.div`
     input {
       border: none;
       border-radius: 1rem;
-      background-color: black;
+      background-color: #080a20;
       color: white;
       height: 3rem;
       border: 1px white solid;
       padding-left: 1rem;
 
-      font-size: 1.5rem;
+      font-size: 1.2rem;
+      width: 90%;
+    }
+    display: none;
+  }
+  .create-folder {
+    background-color: #09013df2;
+    position: absolute;
+    left: 50%;
+    width: 50vw;
+    height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    flex-direction: column;
+    gap: 2rem;
+    font-size: 3rem;
+    input {
+      border: none;
+      border-radius: 1rem;
+      background-color: #080a20;
+      color: white;
+      height: 3rem;
+      border: 1px white solid;
+      padding-left: 1rem;
+
+      font-size: 1.2rem;
       width: 90%;
     }
     display: none;
@@ -599,7 +715,39 @@ const Container = styled.div`
       background-color: #181818;
     }
   }
+  .menu-file-global {
+    text-align: center;
+    padding: 1.2rem;
+    font-weight: 800;
+    transition: 0.2s;
+    border-radius: 0.5rem;
+    width: 100%;
+    background-color: #000000f0;
+
+    &:hover {
+      transition: 0.2s;
+      background-color: #181818;
+    }
+  }
   .r-menu-file {
+    padding: 1rem;
+    overflow: hidden;
+    width: 200px;
+
+    border-radius: 0.7rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    z-index: 999;
+    display: none;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .r-menu-global {
     padding: 1rem;
     overflow: hidden;
     width: 200px;
@@ -797,6 +945,45 @@ const Container = styled.div`
 
     &:visited {
       color: #ffffff;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    overflow-x: hidden;
+    .mobile-upload {
+      display: block;
+      width: 80%;
+      text-align: center;
+      margin-bottom: 3rem;
+      margin-left: 1rem;
+      margin-right: 1rem;
+    }
+    .no-file {
+      display: none;
+    }
+    .file-loader {
+      display: none;
+    }
+    .my-files {
+      width: 98vw;
+    }
+    .items {
+      width: 98vw;
+    }
+
+    #main > div > div > div.user-info {
+      display: none;
+    }
+    #main {
+      width: 100vw;
+    }
+  }
+  @media screen and (max-width: 436px) {
+    .title {
+      font-size: 1.8rem;
+    }
+    #main {
+      width: 98vw;
     }
   }
 `;

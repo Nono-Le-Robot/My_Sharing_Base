@@ -47,11 +47,9 @@ module.exports.login = async (req, res) => {
           }
 
           function generateAcessToken(data) {
-            return jwt.sign(
-              { data },
-              "kyQ4fG1W9DgXXjhJb8nA5pFt8FEY6VD0rBF40JlgAKoL2eYkiLTxps2SMXOJ4NTAJ5C0nM",
-              { expiresIn: "30d" }
-            );
+            return jwt.sign({ data }, process.env.ACCESS_TOKEN_SECRET, {
+              expiresIn: "30d",
+            });
             // res.cookie("jwt",token,{httpOnly : true,  maxAge: durationTokenLogin})
           }
           const acessToken = generateAcessToken(user);

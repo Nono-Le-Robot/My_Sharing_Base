@@ -4,35 +4,28 @@ import Logo from "../assets/logo.png";
 import { Link } from "react-router-dom";
 
 export default function Header() {
-  var userAgent;
-  userAgent = navigator.userAgent.toLowerCase();
-
-  if (typeof orientation !== "undefined" || userAgent.indexOf("mobile") >= 0) {
-    alert("open in desktop");
-  } else {
-    return (
-      <Container>
-        <div className="test">
-          <div className="header">
-            <Link className="logo-link" to="/">
-              <div className="logo-header">
-                <img src={Logo} alt="" />
-                <h1>My Sharing Base</h1>
-              </div>
+  return (
+    <Container>
+      <div className="test">
+        <div className="header">
+          <Link className="logo-link" to="/">
+            <div className="logo-header">
+              <img src={Logo} alt="" />
+              <h1 id="main-title">My Sharing Base</h1>
+            </div>
+          </Link>
+          <nav>
+            <Link className="link" to="/register">
+              Register
             </Link>
-            <nav>
-              <Link className="link" to="/register">
-                Register
-              </Link>
-              <Link className="link" to="/login">
-                Login
-              </Link>
-            </nav>
-          </div>
+            <Link className="link" to="/login">
+              Login
+            </Link>
+          </nav>
         </div>
-      </Container>
-    );
-  }
+      </div>
+    </Container>
+  );
 }
 
 const Container = styled.div`
@@ -83,5 +76,10 @@ const Container = styled.div`
     color: white;
     margin: 0;
     text-align: center;
+  }
+  @media screen and (max-width: 768px) {
+    #main-title {
+      display: none;
+    }
   }
 `;
