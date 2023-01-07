@@ -65,7 +65,7 @@ export default function Upload(props) {
     const data = readerEvent.target.result;
     const params = new URLSearchParams();
     params.set("uploadBy", localStorage.getItem("iat"));
-    params.set("name", file.name);
+    params.set("name", file.name.trim().replace(/ /g, "_"));
     params.set("size", file.size);
     params.set("currentChunkIndex", currentChunkIndex);
     params.set("totalChunks", Math.ceil(file.size / chunkSize));

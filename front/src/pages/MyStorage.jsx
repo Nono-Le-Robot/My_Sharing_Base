@@ -18,11 +18,6 @@ export default function MyStorage(props) {
   const [filesInStorage, setFilesInStorage] = useState(0);
   const [userStorage, setUserStorage] = useState(0);
   const [folderName, setFolderName] = useState("");
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoaded(true);
-    }, 2000);
-  }, []);
 
   const removeItem = async (file) => {
     if (window.confirm("Do you really want to delete this file ?")) {
@@ -38,6 +33,7 @@ export default function MyStorage(props) {
           const userFilesData = result.data.files;
           setUserFiles(userFilesData);
           setFilesInStorage(userFilesData.length);
+
           let totalSize = 0;
           for (let index = 0; index < userFilesData.length; index++) {
             totalSize = totalSize + userFilesData[index].size;
@@ -57,6 +53,7 @@ export default function MyStorage(props) {
         const userFilesData = result.data.files;
         setUserFiles(userFilesData);
         setFilesInStorage(userFilesData.length);
+        setIsLoaded(true);
         let totalSize = 0;
         for (let index = 0; index < userFilesData.length; index++) {
           totalSize = totalSize + userFilesData[index].size;
@@ -75,6 +72,7 @@ export default function MyStorage(props) {
         const userFilesData = result.data.files;
         setUserFiles(userFilesData);
         setFilesInStorage(userFilesData.length);
+        setIsLoaded(true);
         let totalSize = 0;
         for (let index = 0; index < userFilesData.length; index++) {
           totalSize = totalSize + userFilesData[index].size;
