@@ -209,7 +209,7 @@ export default function MyStorage(props) {
                             ) : (
                               <></>
                             )}
-                            {file.link.substr(-3) === "mp4" ? (
+                            {file.link.substr(-3) === "mp4" || file.link.substr(-3) === "mkv" || file.link.substr(-3) === "avi" || file.link.substr(-3) === "mov" ? (
                               <ReactPlayer
                                 className="vid-prev"
                                 width="100%"
@@ -227,7 +227,11 @@ export default function MyStorage(props) {
                             file.link.substr(-3) !== "svg" &&
                             file.link.substr(-4) !== "heif" &&
                             file.link.substr(-4) !== "jpeg" &&
-                            file.link.substr(-3) !== "mp4" ? (
+                            file.link.substr(-3) !== "mp4" &&
+                            file.link.substr(-3) !== "mov" &&
+                            file.link.substr(-3) !== "mkv" &&
+                            file.link.substr(-3) !== "avi"   
+                            ? (
                               <img className="no-img-prev" src={NoImgPreview} />
                             ) : (
                               <></>

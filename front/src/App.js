@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -13,7 +13,7 @@ export default function App() {
   const token = localStorage.getItem("iat");
   if (token) {
     return (
-      <BrowserRouter>
+      <HashRouter>
         <HeaderLogged />
         <Routes>
           <Route path="/storage" element={<Storage />} />
@@ -23,11 +23,11 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<Home />} />
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     );
   } else {
     return (
-      <BrowserRouter>
+      <HashRouter>
         <Header />
         <Routes>
           <Route path="/storage" element={<Storage />} />
@@ -37,7 +37,8 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<Home />} />
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     );
   }
 }
+// basename="my-sharing-base/"

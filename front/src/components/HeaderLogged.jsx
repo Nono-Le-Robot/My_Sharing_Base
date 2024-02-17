@@ -28,7 +28,8 @@ export default function HeaderLogged() {
               <Link
                 onClick={() => {
                   localStorage.removeItem("iat");
-                  window.location.href = "login";
+                  window.location.href = "/#/login";
+                  window.location.reload();
                 }}
                 className="link"
                 to="/login"

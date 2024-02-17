@@ -7,7 +7,6 @@ import "react-toastify/dist/ReactToastify.css";
 import DragDropIcon from "../assets/drag-and-drop.png";
 import { addFiles, uploadRoute, host } from "../utils/APIRoutes";
 import PauseIcon from "../assets/pause.png";
-import { render } from "vue";
 import { QuadraticBezierCurve } from "three";
 import GearIcon from "../assets/gear.png";
 

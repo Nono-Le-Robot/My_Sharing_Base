@@ -53,7 +53,8 @@ export default function Login() {
         localStorage.setItem("userId", data.userId);
         localStorage.setItem("username", data.username);
         localStorage.setItem("iat", data.iat);
-        window.location.href = "storage";
+        window.location.href = "/#/storage";
+        window.location.reload()
       }
     }
   };
