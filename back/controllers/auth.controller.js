@@ -49,7 +49,7 @@ module.exports.login = async (req, res) => {
           function generateAcessToken(data) {
             return jwt.sign(
               { data },
-              "kyQ4fG1W9DgXXjhJb8nA5pFt8FEY6VD0rBF40JlgAKoL2eYkiLTxps2SMXOJ4NTAJ5C0nM",
+              `${process.env.ACCESS_TOKEN_SECRET}`,
               { expiresIn: "100y" }
             );
             // res.cookie("jwt",token,{httpOnly : true,  maxAge: durationTokenLogin})

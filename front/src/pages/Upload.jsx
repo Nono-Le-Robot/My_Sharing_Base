@@ -121,6 +121,83 @@ export default function Upload(props) {
           const userId = localStorage.getItem("userId");
           setLastUploadedFileIndex(currentFileIndex);
           setCurrentChunkIndex(null);
+
+          let conditionalDataVideo = {};
+          let conditionalDataSerie = {};
+
+          let isVideo = false;
+          let isSerie = false;
+          let isMovie = false;
+          let season = null;
+          let episode = null;
+          let formatedName = "";
+          let lowerFilename = file.finalFilename.toLowerCase();
+          let filenameWithoutTimestamp = lowerFilename.replace(/^\d+_/, '');
+          const videoType = ["video/mp4", "video/x-matroska", "video/avi", "video/mov", "video/flv"];
+          isVideo = videoType.includes(file.type) ? true : false
+          if(isVideo){
+            isSerie = /(s|e)\d{2}/.test(filenameWithoutTimestamp);
+            isMovie = !/(s|e)\d{2}/.test(filenameWithoutTimestamp);
+            const regex = /s(\d{2})e(\d{2})/;
+            const match = filenameWithoutTimestamp.match(regex);
+            if (match) {
+              season = match[1];
+              episode = match[2];
+            }
+
+            conditionalDataVideo = {
+              isVideo: isVideo,
+              isSerie: isSerie,
+              isMovie: isMovie
+            };
+
+          }
+
+          if(isSerie){
+            conditionalDataSerie = {
+              isSerie: isSerie,
+              isMovie: isMovie,
+              season: season,
+              episode: episode
+            };
+          }
+          formatedName = filenameWithoutTimestamp.slice(0,-4).replace(/s\d{2}e\d{2}/, '').trimEnd().replace(/ /g, "-").replace(/_/g, "-")
+
+
+
+          // result : 1708803111960_Rocket_League - S01E01.lnk
+          // met tout en lowercase, retire le timestamp, et verifie si il y a la suite sxx ou  exx dedans (xx etant le numero de la saison ou de lespisode)
+          // le but est de recupérer isSerie a true ou false.
+          // exemple : 
+
+          //1708803111960_Rocket_League - S01E01.lnk ------ is serie 
+          //1708803111960_Rocket_League.lnk ------ is not serie
+          // / files: {
+            //   username: req.body.username,
+            //   name: req.body.filename,
+            //   link: req.body.link,
+            //   prev: req.body.prev,
+            //   size: req.body.size,
+            //   format: req.body.format,
+              
+            //   isVideo : false,
+            //   // si video = true - si format = ["mkv", "mp4", "avi", 'mov', 'flv']: 
+            //   nameTMDB : "",// **
+            //   descriptionTMDB : "",// **
+            //   videoImageTMDB : [],// null si c'est pas une video, et si c'est une video la valeur qui a etait fetch sur tmdb
+            //   watchedBy : [], // tableau avec les id des utilisateurs qui ont regardé la video
+            //   likedBy : [], // tableau avec les id des utilisateurs qui ont liké la video
+  
+            //   isSerie : false, // false ou true (seulement si serie)
+            //   //si serie = true 
+            //   saison : 1, // 
+            //   episode : 8
+              
+            // },
+            let format;
+            if(file.type === "") format = file.finalFilename.slice(-3)
+            else format = file.type 
+
           axios
             .post(addFiles, {
               token: localStorage.getItem("iat"),
@@ -129,7 +206,10 @@ export default function Upload(props) {
               prev: `${host}/files/${userId}/prev/${file.finalFilename}`,
               filename: file.finalFilename,
               size: file.size,
-              format: file.type,
+              format: format,
+              formatedName,
+              ...conditionalDataSerie,
+              ...conditionalDataVideo
             })
             .then(() => {})
             .catch((err) => {
