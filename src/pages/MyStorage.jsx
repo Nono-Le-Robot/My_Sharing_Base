@@ -83,6 +83,12 @@ export default function MyStorage(props) {
       .catch();
   }, [props.isNewFile]);
 
+  function removeExtension(filename) {
+    var lastDotPosition = filename.lastIndexOf(".");
+    if (lastDotPosition === -1) return filename;
+    else return filename.substring(0, lastDotPosition);
+}
+
   var userAgent;
   userAgent = navigator.userAgent.toLowerCase();
 
@@ -243,7 +249,7 @@ export default function MyStorage(props) {
                           <div className="card-file-body">
                             <p className="file-name">
                               {" "}
-                              {file.name.substring(14).slice(0,-4)}
+                              {removeExtension(file.name)}
                             </p>
                           </div>
                         </div>
