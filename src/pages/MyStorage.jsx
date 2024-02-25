@@ -84,8 +84,8 @@ export default function MyStorage(props) {
   }, [props.isNewFile]);
 
   function removeExtension(filename) {
-    return filename.replace(/\.[^/.]+$/, '');
-}
+    return filename.replace(/\.[^/.]+$/, '').substring(14).replace(/_/g, " ");
+  }
 
   var userAgent;
   userAgent = navigator.userAgent.toLowerCase();
