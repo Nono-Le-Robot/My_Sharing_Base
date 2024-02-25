@@ -6,22 +6,29 @@ export default function Login() {
   const getStarted = () => {
     navigate("/register");
   };
+  var userAgent;
+  userAgent = navigator.userAgent.toLowerCase();
 
-  return (
-    <>
-      <Container>
-        <h1></h1>
-        <div className="home">
-          <h2 className="desc">
-            Share your files with anyone, for free and without limits.
-          </h2>
-          <h3 className="sub-desc">
-            Upload large files without any size limit per file
-          </h3>
-        </div>
-      </Container>
-    </>
-  );
+  if (typeof orientation !== "undefined" || userAgent.indexOf("mobile") >= 0) {
+    alert("open in desktop");
+  } else {
+    return (
+      <>
+        <Container>
+          <div className="home">
+            <h2>Share your files with anyone, for free and without limits.</h2>
+            <h3>Unlimited disk storage</h3>
+            <h3>Upload large files without any size limit per file</h3>
+          </div>
+          <div className="mobile">
+            <h2>
+              Only available on desktop for the moment... (work on mobile app)
+            </h2>
+          </div>
+        </Container>
+      </>
+    );
+  }
 }
 
 const Container = styled.div`
@@ -93,23 +100,13 @@ const Container = styled.div`
       filter: contrast(150%);
     }
   }
-
-  @media screen and (max-width: 768px) {
-    .desc {
-      font-size: 1.2rem;
-    }
-    .sub-desc {
-      font-size: 1rem;
-      text-align: center;
+  /* @media screen and (max-width: 1280px) {
+    .mobile {
+      display: block;
+      margin: 0 1rem;
     }
     .home {
-      margin-left: 1rem;
-      margin-right: 1rem;
-    }
-  }
-  @media screen and (max-width: 318px) {
-    .sub-desc {
       display: none;
     }
-  }
+  } */
 `;
