@@ -85,8 +85,8 @@ export default function MyStorage(props) {
 
   function removeExtension(filename) {
     var lastDotPosition = filename.lastIndexOf(".");
-    if (lastDotPosition === -1) return filename;
-    else return filename.substring(0, lastDotPosition);
+    if (lastDotPosition === -1) return filename.substring(14).replace(/_/g, " ");
+    else return filename.substring(0, lastDotPosition).substring(14).replace(/_/g, " ");
 }
 
   var userAgent;
