@@ -137,18 +137,27 @@ module.exports.add = async (req, res) => {
             try {
                 const response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${movieSearch}&include_adult=true&language=fr-FR&page=1`, options);
                 const data = await response.json();
-                const serieId = data.results[0].id;
-                const movieName = data.results[0].original_title
-                const movieDescription = data.results[0].overview
-                const imageResponse = await fetch(`https://api.themoviedb.org/3/movie/${serieId}/images`, options);
-                const imageData = await imageResponse.json();
-                const movieImage = `https://image.tmdb.org/t/p/w500/${imageData.posters[0].file_path}`;
-                const movieData = {
+                console.log('resultat', data.results.length);
+                if(data.results.length > 0){
+                  const movieId = data.results[0].id;
+                  const movieName = data.results[0].original_title
+                  const movieDescription = data.results[0].overview
+                  const imageResponse = await fetch(`https://api.themoviedb.org/3/movie/${movieId}/images`, options);
+                  const imageData = await imageResponse.json();
+                  const movieImage = `https://image.tmdb.org/t/p/w500/${imageData.posters[0].file_path}`;
+                  const movieData = {
                     movieName : movieName,
                     movieDescription : movieDescription,
                     image : movieImage
+                  }
+                  return [movieData];
                 }
-                return [movieData];
+                else{
+                  return null
+                }
+
+
+
             } catch (err) {
                 console.error(err);
                 return [];
@@ -176,14 +185,16 @@ module.exports.add = async (req, res) => {
           const mots = phraseCapitalisee.split(" ");
           const motsCapitalises = mots.map(mot => mot.charAt(0).toUpperCase() + mot.slice(1).toLowerCase());
           const formatedMovieName = motsCapitalises.join(" ");
-          conditionalDataMovie = {
-            isSerie: isSerie,
-            isMovie: isMovie,
-            movieName : formatedName,
-            descriptionTMDB : TMDB[0].movieDescription,
-            ImageTMDB : TMDB[0].image,
-            formatedMovieName : formatedMovieName
-          };
+          if(TMDB){
+            conditionalDataMovie = {
+              isSerie: isSerie,
+              isMovie: isMovie,
+              movieName : formatedName,
+              descriptionTMDB : TMDB[0].movieDescription,
+              ImageTMDB : TMDB[0].image,
+              formatedMovieName : formatedMovieName
+            };
+          }
         }
         userModel
         .findByIdAndUpdate(

@@ -24,8 +24,9 @@ export default function MyStorage(props) {
   }, []);
 
   const removeItem = async (file) => {
-    await axios.post(removeFiles, {
-      iat: localStorage.getItem("iat"),
+    if (window.confirm("Do you really want to remove this file ?")) {
+      await axios.post(removeFiles, {
+        iat: localStorage.getItem("iat"),
       fileName: file.name,
     });
     await axios
@@ -43,6 +44,7 @@ export default function MyStorage(props) {
         }
       })
       .catch();
+    }
   };
 
   useEffect(() => {
@@ -214,6 +216,7 @@ export default function MyStorage(props) {
                                 className="vid-prev"
                                 width="100%"
                                 height="6.4rem"
+                                light
                                 url={file.link}
                                 controls
                               />
@@ -240,7 +243,7 @@ export default function MyStorage(props) {
                           <div className="card-file-body">
                             <p className="file-name">
                               {" "}
-                              {file.name.substring(14)}
+                              {file.name.substring(14).slice(0,-4)}
                             </p>
                           </div>
                         </div>
