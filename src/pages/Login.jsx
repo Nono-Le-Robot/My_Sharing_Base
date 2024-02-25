@@ -9,7 +9,7 @@ import LoginLogo from "../assets/login.png";
 export default function Login() {
   const navigate = useNavigate();
   const [userData, setUserData] = useState({
-    username: "",
+    email: "",
     password: "",
   });
 
@@ -26,12 +26,12 @@ export default function Login() {
   };
 
   const handleValidation = () => {
-    const { username, password } = userData;
+    const { email, password } = userData;
     if (password === "") {
       toast.error("password is required.", toastOptions);
       return false;
-    } else if (username === "") {
-      toast.error("username is required.", toastOptions);
+    } else if (email === "") {
+      toast.error("email is required.", toastOptions);
       return false;
     }
     return true;
@@ -40,9 +40,9 @@ export default function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (handleValidation()) {
-      const { username, password } = userData;
+      const { email, password } = userData;
       const { data } = await axios.post(loginRoute, {
-        username,
+        email,
         password,
       });
 
@@ -51,7 +51,7 @@ export default function Login() {
       } else {
         toast.success(data.msg, toastOptions);
         localStorage.setItem("userId", data.userId);
-        localStorage.setItem("username", data.username);
+        localStorage.setItem("email", data.email);
         localStorage.setItem("iat", data.iat);
         window.location.href = "/#/storage";
         window.location.reload()
@@ -82,9 +82,9 @@ export default function Login() {
               <input
                 autoComplete="nope"
                 type="text"
-                name="username"
-                className="username"
-                placeholder="Username"
+                name="email"
+                className="email"
+                placeholder="email"
                 onChange={(e) => handleChange(e)}
               />
               <input
