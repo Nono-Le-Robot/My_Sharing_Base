@@ -52,7 +52,9 @@ export default function Login() {
         toast.success(data.msg, toastOptions);
         localStorage.setItem("userId", data.userId);
         localStorage.setItem("email", data.email);
+        localStorage.setItem("iat", data.username);
         localStorage.setItem("iat", data.iat);
+
         window.location.href = "/#/storage";
         window.location.reload()
       }
