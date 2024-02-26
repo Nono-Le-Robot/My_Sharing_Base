@@ -28,6 +28,9 @@ export default function HeaderLogged() {
               <Link
                 onClick={() => {
                   localStorage.removeItem("iat");
+                  localStorage.removeItem("username");
+                  localStorage.removeItem("email");
+                  localStorage.removeItem("userId");
                   window.location.href = "/#/login";
                   window.location.reload();
                 }}
