@@ -132,7 +132,7 @@ export default function Upload(props) {
           let formatedName = "";
           let lowerFilename = file.finalFilename.toLowerCase();
           let filenameWithoutTimestamp = lowerFilename.replace(/^\d+_/, '');
-          const videoType = ["video/mp4", "video/x-matroska", "video/avi", "video/mov", "video/flv"];
+          const videoType = ["video/mp4", "video/x-matroska", "video/avi", "video/mov", "video/flv", "video/webm"];
           isVideo = videoType.includes(file.type) ? true : false
           if(isVideo){
             isSerie = /(s|e)\d{2}/.test(filenameWithoutTimestamp);
