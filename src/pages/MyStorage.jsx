@@ -215,7 +215,7 @@ export default function MyStorage(props) {
                             ) : (
                               <></>
                             )}
-                            {file.link.substr(-3) === "mp4" || file.link.substr(-3) === "mkv" || file.link.substr(-3) === "avi" || file.link.substr(-3) === "mov" ? (
+                            {file.link.substr(-3) === "mp4" || file.link.substr(-3) === "mkv" || file.link.substr(-3) === "avi" || file.link.substr(-3) === "mov" || file.link.substr(-4) === "webm" ? (
                               <ReactPlayer
                                 className="vid-prev"
                                 width="100%"
