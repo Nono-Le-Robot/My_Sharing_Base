@@ -10,7 +10,7 @@ import PauseIcon from "../assets/pause.png";
 import GearIcon from "../assets/gear.png";
 
 export default function Upload(props) {
-  const chunkSize = 1000 * 1024;
+  const chunkSize = 10000 * 1024;
   const [fixedNumOfDroppedFiles, setFixedNumOfDroppedFiles] = useState(0);
   const [indexOfUpload, setIndexOfUpload] = useState(1);
   const [dropzoneActive, setDropzoneActive] = useState(false);
