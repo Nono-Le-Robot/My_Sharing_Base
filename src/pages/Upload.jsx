@@ -168,7 +168,7 @@ export default function Upload(props) {
           axios
             .post(addFiles, {
               token: localStorage.getItem("iat"),
-              uploadBy: localStorage.getItem("email"),
+              email: localStorage.getItem("email"),
               link: `${host}/files/${userId}/${file.finalFilename}`,
               prev: `${host}/files/${userId}/prev/${file.finalFilename}`,
               filename: file.finalFilename,
