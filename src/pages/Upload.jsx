@@ -189,7 +189,7 @@ export default function Upload(props) {
               email: localStorage.getItem("email"),
               link: `${host}/files/${userId}/${file.finalFilename}`,
               prev: `${host}/files/${userId}/prev/${file.finalFilename}`,
-              filename: file.finalFilename.replace(/ /g,"_"),
+              filename: file.finalFilename.replace(/ /g,"_").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9 ]/g, "").toLowerCase().trimStart().trimEnd(),
               size: file.size,
               format: format,
               formatedName,
