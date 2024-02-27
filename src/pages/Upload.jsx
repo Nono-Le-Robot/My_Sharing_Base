@@ -8,6 +8,9 @@ import DragDropIcon from "../assets/drag-and-drop.png";
 import { addFiles, uploadRoute, host } from "../utils/APIRoutes";
 import PauseIcon from "../assets/pause.png";
 import GearIcon from "../assets/gear.png";
+import { v4 as uuidv4 } from 'uuid';
+
+
 
 export default function Upload(props) {
   const chunkSize = 10000 * 1024;
@@ -24,6 +27,7 @@ export default function Upload(props) {
   const [userUploadSpeed, setUserUploadSpeed] = useState(0);
   const [speedLog, setSpeedLog] = useState([]);
   const [userSpeedAverage, setUserSpeedAverage] = useState(0);
+  const [uuid, setUuid] = useState(null);
   let sum = 0;
   const toastOptions = {
     position: "bottom-right",
@@ -32,6 +36,11 @@ export default function Upload(props) {
     draggable: false,
     theme: "dark",
   };
+
+  useEffect(() => {
+    setUuid(uuidv4())
+  }, [])
+  
 
   function handleDrop(e) {
     setSpeedLog([]);
@@ -57,10 +66,48 @@ export default function Upload(props) {
 
   function uploadChunk(readerEvent) {
     const file = files[currentFileIndex];
+    let originalName = file.name
+    // lower case
+    originalName = originalName.toLowerCase();
+    // remove multiples whitespaces
+    originalName = originalName.replace(/\s+/g, '-');
+    
+    // replace _ to - 
+    originalName = originalName.replace(/_/g, "-")
+    // replace . to - (not .ext)
+    const match = originalName.match(/^(.*)\.(.*)$/);
+    if (!match) {
+        return str;
+    }
+    const [, beforeDot, afterDot] = match;
+    const nameWithoutDots = beforeDot.replace(/\./g, '-');
+    originalName = `${nameWithoutDots}.${afterDot}`
+
+    // replace accents
+    originalName = originalName.replace(/[ÀÁÂÃÄÅ]/g,"A")
+    .replace(/[àáâãäå]/g,"a")
+    .replace(/[ÈÉÊË]/g,"E")
+    .replace(/[èéêë]/g,"e")
+    .replace(/[ÌÍÎÏ]/g,"I")
+    .replace(/[ìíîï]/g,"i")
+    .replace(/[ÒÓÔÕÖ]/g,"O")
+    .replace(/[òóôõö]/g,"o")
+    .replace(/[ÙÚÛÜ]/g,"U")
+    .replace(/[ùúûü]/g,"u")
+    .replace(/[ÝŸ]/g,"Y")
+    .replace(/[ýÿ]/g,"y")
+    .replace(/[Ç]/g,"C")
+    .replace(/[ç]/g,"c");
+
+    originalName = originalName.replace(/[^a-zA-Z0-9-_.]/g, '')
+
+
+
     const data = readerEvent.target.result;
     const params = new URLSearchParams();
+    params.set('uuid', uuid)
     params.set("uploadBy", localStorage.getItem("iat"));
-    params.set("name", file.name);
+    params.set("name", originalName);
     params.set("size", file.size);
     params.set("currentChunkIndex", currentChunkIndex);
     params.set("totalChunks", Math.ceil(file.size / chunkSize));
@@ -89,11 +136,12 @@ export default function Upload(props) {
         const filesize = files[currentFileIndex].size;
         const chunks = Math.ceil(filesize / chunkSize) - 1;
         const isLastChunk = currentChunkIndex === chunks;
+
         if (
           currentFileIndex + 1 === files.length &&
           files.length !== 1 &&
           isLastChunk
-        ) {
+          ) {
           setIndexOfUpload(1);
           setFixedNumOfDroppedFiles(0);
           toast.success(
@@ -106,52 +154,46 @@ export default function Upload(props) {
           setIndexOfUpload(test);
         }
         if (files.length === 1 && isLastChunk) {
+
           setIndexOfUpload(1);
           setFixedNumOfDroppedFiles(0);
           toast.success(
             `The files have been successfully uploaded ! `,
             toastOptions
-          );
-        }
-        if (isLastChunk) {
-          props.newFileDetected(Date.now() + file.name);
-
-          file.finalFilename = response.data.finalFilename;
-          const userId = localStorage.getItem("userId");
-          setLastUploadedFileIndex(currentFileIndex);
-          setCurrentChunkIndex(null);
-
-          let conditionalDataVideo = {};
-          let conditionalDataSerie = {};
-
-          let isVideo = false;
+            );
+          }
+          if (isLastChunk) {
+            props.newFileDetected(Date.now() + response.data.finalFilename);
+            file.finalFilename = response.data.finalFilename;
+            const userId = localStorage.getItem("userId");
+            setLastUploadedFileIndex(currentFileIndex);
+            setCurrentChunkIndex(null);
+            let conditionalDataVideo = {};
+            let conditionalDataSerie = {};
+            let isVideo = false;
           let isSerie = false;
           let isMovie = false;
           let season = null;
           let episode = null;
-          let formatedName = "";
-          let lowerFilename = file.finalFilename.toLowerCase();
-          let filenameWithoutTimestamp = lowerFilename.replace(/^\d+_/, '_');
+          let originalName = file.finalFilename;
+          let formatedName = file.finalFilename;
           const videoType = ["video/mp4", "video/x-matroska", "video/avi", "video/mov", "video/flv", "video/webm"];
           isVideo = videoType.includes(file.type) ? true : false
           if(isVideo){
-            isSerie = /(s|e)\d{2}/.test(filenameWithoutTimestamp);
-            isMovie = !/(s|e)\d{2}/.test(filenameWithoutTimestamp);
+            isSerie = /(s|e)\d{2}/.test(formatedName);
+            isMovie = !/(s|e)\d{2}/.test(formatedName);
             const regex = /s(\d{2})e(\d{2})/;
-            const match = filenameWithoutTimestamp.match(regex);
+            const match = formatedName.match(regex);
             if (match) {
               season = match[1];
               episode = match[2];
             }
-
             conditionalDataVideo = {
               isVideo: isVideo,
               isSerie: isSerie,
               isMovie: isMovie
             };
-
           }
-
           if(isSerie){
             conditionalDataSerie = {
               isSerie: isSerie,
@@ -160,41 +202,38 @@ export default function Upload(props) {
               episode: episode
             };
           }
-          formatedName = filenameWithoutTimestamp.slice(0,-4).replace(/s\d{2}e\d{2}/, '').trimEnd().replace(/ /g, "-").replace(/_/g, "-")
-          // Supprimer tout ce qui suit "SxxExx"
-          formatedName = formatedName.replace(/S\d{2}E\d{2}.*/, '');
 
-          // Supprimer les doubles espaces et les remplacer par des simples espaces
-          formatedName = formatedName.replace(/\s+/g, ' ');
+          // lowercase
+          formatedName = formatedName.toLowerCase()
+          // remove timestamp
+          formatedName = formatedName.replace(/^\d+_/, '')
+          // remove extension : 
+          formatedName = formatedName.replace(/\.[^.]*$/, '');
 
-          // Remplacer les points par des espaces (sauf l'extension du fichier)
-          // Note : Cette étape peut nécessiter une logique plus complexe pour gérer correctement les extensions de fichier
-          // Pour cet exemple, nous supposons que l'extension est toujours la dernière partie de la chaîne
-          formatedName = formatedName.replace(/\.(?=[^.]*$)/g, ' ');
-
-          // Supprimer les caractères spéciaux et les accents, et mettre tout en minuscule
-          formatedName = formatedName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9 ]/g, "").toLowerCase();
-
-          // Supprimer les espaces au debut et a la fin
-          formatedName = formatedName.trimStart().trimEnd()
-          // Remplacer tous les espaces par des tirets
-          formatedName = formatedName.replace(/\s+/g, '-');
+          let cleanedString = formatedName.replace(/s(\d+)e(\d+)(.*)/, function(match, p1, p2, p3) {
+            return "s" + p1 + "e" + p2;
+          });
+          formatedName = cleanedString
+          // remove sxx exx
+          formatedName = formatedName.replace(/s(\d+)e(\d+)/g, "")
+          // // remove special chars : 
+          // formatedName = formatedName.replace(/[^a-zA-Z0-9 ]/g, '')
+          
+          
             let format;
-            if(file.type === "") format = file.finalFilename.slice(-3)
+            if(file.type === "") format = file.finalFilename.slice(str.lastIndexOf("."))
             else format = file.type 
-
-
-            lowerFilename = lowerFilename
           axios
             .post(addFiles, {
               token: localStorage.getItem("iat"),
               email: localStorage.getItem("email"),
               link: `${host}/files/${userId}/${file.finalFilename}`,
               prev: `${host}/files/${userId}/prev/${file.finalFilename}`,
-              filename: file.finalFilename.replace(/ /g,"_").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9 ]/g, "").toLowerCase().trimStart().trimEnd(),
               size: file.size,
               format: format,
-              formatedName,
+              filename:  originalName, // original name
+              formatedName: formatedName, // for TMDB request name
+              displayName: null, // to diplay in front
               ...conditionalDataSerie,
               ...conditionalDataVideo
             })
@@ -217,9 +256,9 @@ export default function Upload(props) {
             `Upload error, try again or contact support`,
             toastOptions
           );
-          setTimeout(() => {
-            window.location.reload();
-          }, 3500);
+          // setTimeout(() => {
+          //   window.location.reload();
+          // }, 3500);
         }
       });
   }
