@@ -246,10 +246,16 @@ export default function MyStorage(props) {
                             )}
                           </div>
                           <div className="card-file-body">
-                            <p className="file-name">
-                              {" "}
-                              {file.displayName}
-                            </p>
+                            {file.saison ? (
+                              <p className="file-name">
+                                {`${file.displayName} ${file.saison} ${file.episode}`}
+                              </p>
+                              ) : ( 
+                                <p className="file-name">
+                                  {`${file.displayName}`}
+                                </p>
+                              )
+                            }
                           </div>
                         </div>
                       </a>
