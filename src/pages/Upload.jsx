@@ -218,6 +218,10 @@ export default function Upload(props) {
           // remove sxx exx
           formatedName = formatedName.replace(/s(\d+)e(\d+)/g, "")
           formatedName = formatedName.replace(/--/g, '-')
+
+          if (formatedName.endsWith("-")) {
+            formatedName = formatedName.substring(0, formatedName.length -  1);
+        }
           // // remove special chars : 
           // formatedName = formatedName.replace(/[^a-zA-Z0-9 ]/g, '')
           
