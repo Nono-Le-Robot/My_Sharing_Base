@@ -248,7 +248,7 @@ export default function MyStorage(props) {
                           <div className="card-file-body">
                             <p className="file-name">
                               {" "}
-                              {removeExtension(file.name)}
+                              {file.displayName}
                             </p>
                           </div>
                         </div>
