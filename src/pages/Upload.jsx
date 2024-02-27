@@ -161,6 +161,24 @@ export default function Upload(props) {
             };
           }
           formatedName = filenameWithoutTimestamp.slice(0,-4).replace(/s\d{2}e\d{2}/, '').trimEnd().replace(/ /g, "-").replace(/_/g, "-")
+          // Supprimer tout ce qui suit "SxxExx"
+          formatedName = formatedName.replace(/S\d{2}E\d{2}.*/, '');
+
+          // Supprimer les doubles espaces et les remplacer par des simples espaces
+          formatedName = formatedName.replace(/\s+/g, ' ');
+
+          // Remplacer les points par des espaces (sauf l'extension du fichier)
+          // Note : Cette étape peut nécessiter une logique plus complexe pour gérer correctement les extensions de fichier
+          // Pour cet exemple, nous supposons que l'extension est toujours la dernière partie de la chaîne
+          formatedName = formatedName.replace(/\.(?=[^.]*$)/g, ' ');
+
+          // Supprimer les caractères spéciaux et les accents, et mettre tout en minuscule
+          formatedName = formatedName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9 ]/g, "").toLowerCase();
+
+          // Supprimer les espaces au debut et a la fin
+          formatedName = formatedName.trimStart().trimEnd()
+          // Remplacer tous les espaces par des tirets
+          formatedName = formatedName.replace(/\s+/g, '-');
             let format;
             if(file.type === "") format = file.finalFilename.slice(-3)
             else format = file.type 
@@ -171,7 +189,7 @@ export default function Upload(props) {
               email: localStorage.getItem("email"),
               link: `${host}/files/${userId}/${file.finalFilename}`,
               prev: `${host}/files/${userId}/prev/${file.finalFilename}`,
-              filename: file.finalFilename,
+              filename: file.finalFilename.replace(/ /g,"_"),
               size: file.size,
               format: format,
               formatedName,
