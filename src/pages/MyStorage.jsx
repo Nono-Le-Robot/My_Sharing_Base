@@ -248,7 +248,7 @@ export default function MyStorage(props) {
                           <div className="card-file-body">
                             {file.season ? (
                               <p className="file-name">
-                                {`${file.displayName} ${file.season} ${file.episode}`}
+                                {`${file.displayName} S${file.season}E${file.episode}`}
                               </p>
                               ) : ( 
                                 <p className="file-name">
