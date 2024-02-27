@@ -204,7 +204,7 @@ export default function Upload(props) {
           }
 
           // lowercase
-          formatedName = formatedName.toLowerCase().trim
+          formatedName = formatedName.toLowerCase().trim()
           // remove timestamp
           formatedName = formatedName.replace(/^\d+_/, '')
           // remove extension : 
@@ -214,7 +214,7 @@ export default function Upload(props) {
             return "s" + p1 + "e" + p2;
           });
           formatedName = cleanedString
-          formatedName = formatedName.trimStart().trimEnd()
+          formatedName = formatedName.trim()
           // remove sxx exx
           formatedName = formatedName.replace(/s(\d+)e(\d+)/g, "")
           formatedName = formatedName.replace(/--/g, '-')
