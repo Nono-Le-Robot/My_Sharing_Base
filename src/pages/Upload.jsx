@@ -131,7 +131,7 @@ export default function Upload(props) {
           let episode = null;
           let formatedName = "";
           let lowerFilename = file.finalFilename.toLowerCase();
-          let filenameWithoutTimestamp = lowerFilename.replace(/^\d+_/, '');
+          let filenameWithoutTimestamp = lowerFilename.replace(/^\d+_/, '_');
           const videoType = ["video/mp4", "video/x-matroska", "video/avi", "video/mov", "video/flv", "video/webm"];
           isVideo = videoType.includes(file.type) ? true : false
           if(isVideo){
@@ -183,6 +183,8 @@ export default function Upload(props) {
             if(file.type === "") format = file.finalFilename.slice(-3)
             else format = file.type 
 
+
+            lowerFilename = lowerFilename
           axios
             .post(addFiles, {
               token: localStorage.getItem("iat"),
