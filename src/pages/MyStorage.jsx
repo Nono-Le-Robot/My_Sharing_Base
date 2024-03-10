@@ -218,7 +218,6 @@ export default function MyStorage(props) {
                         alt="icon de suppression en forme de croix. permet de supprimer le fichier"
                       />
                       <a
-                        download
                         href={file.link}
                         target="_blank"
                         className="texte-download item-body"
