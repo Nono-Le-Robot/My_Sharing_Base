@@ -34,7 +34,14 @@ export default function MyStorage(props) {
         token: localStorage.getItem("iat"),
       })
       .then((result) => {
-        const userFilesData = result.data.files;
+        const userFilesData = result.data.files.sort(function compare(a, b) {
+          if (a.displayName < b.displayName)
+              return -1;
+          if (a.displayName > b.displayName )
+              return 1;
+          return 0;
+        });
+        console.log(userFilesData)
         setUserFiles(userFilesData);
         setFilesInStorage(userFilesData.length);
         let totalSize = 0;
@@ -53,7 +60,14 @@ export default function MyStorage(props) {
         token: localStorage.getItem("iat"),
       })
       .then((result) => {
-        const userFilesData = result.data.files;
+        const userFilesData = result.data.files.sort(function compare(a, b) {
+          if (a.displayName < b.displayName)
+              return -1;
+          if (a.displayName > b.displayName )
+              return 1;
+          return 0;
+        });
+
         setUserFiles(userFilesData);
         setFilesInStorage(userFilesData.length);
         let totalSize = 0;
@@ -71,7 +85,14 @@ export default function MyStorage(props) {
         token: localStorage.getItem("iat"),
       })
       .then((result) => {
-        const userFilesData = result.data.files;
+        const userFilesData = result.data.files.sort(function compare(a, b) {
+          if (a.displayName < b.displayName)
+              return -1;
+          if (a.displayName > b.displayName )
+              return 1;
+          return 0;
+        });
+        console.log(userFilesData)
         setUserFiles(userFilesData);
         setFilesInStorage(userFilesData.length);
         let totalSize = 0;
@@ -204,18 +225,18 @@ export default function MyStorage(props) {
                       >
                         <div className="card-file">
                           <div className="card-file-head">
-                            {file.link.substr(-3) === "png" ||
+                            {/* {file.link.substr(-3) === "png" ||
                             file.link.substr(-3) === "jpg" ||
                             file.link.substr(-3) === "gif" ||
                             file.link.substr(-3) === "bmp" ||
                             file.link.substr(-3) === "svg" ||
                             file.link.substr(-4) === "heif" ||
                             file.link.substr(-4) === "jpeg" ? (
-                              <img className="img-prev" src={file.prev} />
+                              <img className="img-prev" src={file.link} />
                             ) : (
                               <></>
-                            )}
-                            {file.link.substr(-3) === "mp4" || file.link.substr(-3) === "mkv" || file.link.substr(-3) === "avi" || file.link.substr(-3) === "mov" || file.link.substr(-4) === "webm" ? (
+                            )} */}
+                            {/* {file.link.substr(-3) === "mp4" || file.link.substr(-3) === "mkv" || file.link.substr(-3) === "avi" || file.link.substr(-3) === "mov" || file.link.substr(-4) === "webm" ? (
                               <ReactPlayer
                                 className="vid-prev"
                                 width="100%"
@@ -226,8 +247,8 @@ export default function MyStorage(props) {
                               />
                             ) : (
                               <></>
-                            )}
-                            {file.link.substr(-3) !== "png" &&
+                            )} */}
+                            {/* {file.link.substr(-3) !== "png" &&
                             file.link.substr(-3) !== "jpg" &&
                             file.link.substr(-3) !== "gif" &&
                             file.link.substr(-3) !== "bmp" &&
@@ -243,7 +264,7 @@ export default function MyStorage(props) {
                               <img className="no-img-prev" src={NoImgPreview} />
                             ) : (
                               <></>
-                            )}
+                            )} */}
                           </div>
                           <div className="card-file-body">
                             {file.season ? (
