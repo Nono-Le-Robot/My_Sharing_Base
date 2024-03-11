@@ -37,6 +37,14 @@ export default function Login() {
     return true;
   };
 
+  const navigateToMSB = () => {
+    window.open('https://my-sharing-base.sanren.fr', '_blank');
+   }
+   
+   const navigateToMWB = () => {
+    window.open('https://my-watching-base.sanren.fr', '_blank');
+   }
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (handleValidation()) {
@@ -77,6 +85,7 @@ export default function Login() {
                 alt="icon d'enregistrement representant une personne avec un logo + a coté"
               />
             </div>
+            <p className="info-account"><strong className="strong" onClick={navigateToMSB}>My Sharing Base</strong> and <strong onClick={navigateToMWB} className="strong">My Watching Base</strong> account is the same.</p>
             <form
               onSubmit={(event) => handleSubmit(event)}
               className="register-form"
@@ -125,6 +134,23 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   background-color: #14143b;
+
+  .strong {
+    text-decoration: underline;
+    font-size: 1.1rem;
+
+    &:hover{
+      cursor:pointer
+    }
+  }
+
+  .info-account{
+    color: #ffc979;
+    font-weight: bold;
+    font-size: 1rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
 
   .register-logo-div {
     width: 100%;
